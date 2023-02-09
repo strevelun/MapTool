@@ -6,6 +6,8 @@
 #define SCREEN_WIDTH	800
 #define SCREEN_HEIGHT	600
 
+class CEditWnd;
+
 class CApp
 {
 private:
@@ -16,6 +18,8 @@ private:
 
 	HINSTANCE m_hInst = nullptr;
 	HWND m_hWnd = nullptr;
+
+	CEditWnd* m_editWnd;
 
 private:
 	CApp() { }

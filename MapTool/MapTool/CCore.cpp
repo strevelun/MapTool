@@ -206,7 +206,5 @@ ID2D1HwndRenderTarget* CCore::CreateRenderTarget(HWND _hWnd)
 		&renderTarget);
 	if (FAILED(hr)) return nullptr;
 
-
-
 	return renderTarget;
 }

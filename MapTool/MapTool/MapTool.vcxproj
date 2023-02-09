@@ -128,12 +128,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CApp.cpp" />
+    <ClCompile Include="CBaseWnd.cpp" />
     <ClCompile Include="CCore.cpp" />
+    <ClCompile Include="CEditWnd.cpp" />
+    <ClCompile Include="CImage.cpp" />
+    <ClCompile Include="CFileManager.cpp" />
     <ClCompile Include="MapTool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApp.h" />
+    <ClInclude Include="CBaseWnd.h" />
     <ClInclude Include="CCore.h" />
+    <ClInclude Include="CEditWnd.h" />
+    <ClInclude Include="CImage.h" />
+    <ClInclude Include="CFileManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
