@@ -144,6 +144,7 @@
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CMouse.h" />
+    <ClInclude Include="Settings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

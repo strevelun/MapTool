@@ -22,9 +22,11 @@ public:
 	~CSprite();
 	void SetBitmap(ID2D1Bitmap* _bitmap) { m_bitmap = _bitmap; }
 	void SetPixel(DWORD* _pixel) { m_pixel = _pixel; }
+	void SetRect(D2D1_RECT_F _rect) { m_size = _rect; }
 
 	ID2D1Bitmap* GetBitmap() const { return m_bitmap; }
 	int GetWidth() const { return m_size.right - m_size.left; }
 	int GetHeight() const { return m_size.bottom - m_size.top; }
+	D2D1_RECT_F GetRect() const { return m_size; }
 };
 
