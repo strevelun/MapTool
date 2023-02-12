@@ -131,8 +131,9 @@
     <ClCompile Include="CBaseWnd.cpp" />
     <ClCompile Include="CCore.cpp" />
     <ClCompile Include="CEditWnd.cpp" />
-    <ClCompile Include="CImage.cpp" />
-    <ClCompile Include="CFileManager.cpp" />
+    <ClCompile Include="CSprite.cpp" />
+    <ClCompile Include="CResourceManager.cpp" />
+    <ClCompile Include="CMouse.cpp" />
     <ClCompile Include="MapTool.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,8 +141,9 @@
     <ClInclude Include="CBaseWnd.h" />
     <ClInclude Include="CCore.h" />
     <ClInclude Include="CEditWnd.h" />
-    <ClInclude Include="CImage.h" />
-    <ClInclude Include="CFileManager.h" />
+    <ClInclude Include="CSprite.h" />
+    <ClInclude Include="CResourceManager.h" />
+    <ClInclude Include="CMouse.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

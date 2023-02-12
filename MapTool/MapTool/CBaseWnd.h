@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <d2d1.h>
+#include <dwrite.h>
 
 class CBaseWnd
 {
@@ -12,7 +13,7 @@ protected:
 	ID2D1SolidColorBrush* m_pBlackBrush = nullptr;
 	ID2D1SolidColorBrush* m_pRedBrush = nullptr;
 
-	//IDWriteFactory* m_pDWriteFactory = nullptr;
+	IDWriteFactory* m_pDWriteFactory = nullptr;
 	IDWriteTextFormat* m_pDWTextFormat = nullptr;
 
 public:

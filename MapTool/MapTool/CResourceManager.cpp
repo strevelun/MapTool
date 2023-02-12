@@ -1,22 +1,24 @@
-#include "CFileManager.h"
-#include "CImage.h"
+#include "CResourceManager.h"
+#include "CSprite.h"
 
 #include <vector>
 #include <string>
 #include <fstream>
 #include <Windows.h>
+#include <stack>
 
-CFileManager* CFileManager::m_inst = nullptr;
 
-CFileManager::CFileManager()
+CResourceManager* CResourceManager::m_inst = nullptr;
+
+CResourceManager::CResourceManager()
 {
 }
 
-CFileManager::~CFileManager()
+CResourceManager::~CResourceManager()
 {
 }
 
-void CFileManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
+void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
 {
     std::wstring folder = L".\\resource\\";
     std::wstring searchPath = folder + L"*.*";
@@ -47,17 +49,42 @@ void CFileManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                 if (pFile == nullptr || errNum != 0)
                     return;
 
+                std::stack<char> s;
+                int i;
+
+                for (i = fileName.size(); i >= 0; i--)
+                {
+                    if (fileName[i] == '.')
+                        break;
+                    s.push(fileName[i]);
+                }
+
+                char* str = new char[fileName.size() - i];
+                i = 0;
+                while (!s.empty())
+                {
+                    str[i++] = s.top();
+                    s.pop();
+                }
+
+                std::string name(str);
+
+                delete[] str;
+
+                Type type;
+
                 fread(&clipSize, sizeof(int), 1, pFile);
+                fread(&type, sizeof(Type), 1, pFile);
 
                 for (int i = 0; i < clipSize; i++)
                 {
-                    CImage* image = new CImage;
-                    fread(image, sizeof(CImage), 1, pFile);
+                    CSprite* image = new CSprite;
+                    fread(image, sizeof(CSprite), 1, pFile);
                     fread(&width, sizeof(int), 1, pFile);
                     fread(&height, sizeof(int), 1, pFile);
                     DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * width * height);
 
-                    fread(pixel, sizeof(DWORD) * width, height, pFile);
+                    fread(&pixel[0], sizeof(DWORD) * width, height, pFile);
 
                     D2D1_BITMAP_PROPERTIES bpp;
                     bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -68,6 +95,19 @@ void CFileManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                     image->SetPixel(pixel);
                     _pRenderTarget->CreateBitmap(D2D1::SizeU(width, height), pixel, width * 4, &bpp, &bitmap);
                     image->SetBitmap(bitmap);
+
+                    switch(type)
+                    {
+                    case Type::Tile:
+                        m_mapImage["Tile"].push_back(image);
+                        break;
+                    case Type::Block:
+                        m_mapImage["Block"].push_back(image);
+                        break;
+                    case Type::Character:
+                        m_mapImage["Character"].push_back(image);
+                        break;
+                    }
 
                 }
 

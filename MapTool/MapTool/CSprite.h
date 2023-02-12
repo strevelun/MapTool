@@ -2,7 +2,14 @@
 
 #include <d2d1.h>
 
-class CImage
+enum class Type
+{
+	Tile,
+	Block,
+	Character
+};
+
+class CSprite
 {
 	float m_pivotX = 0.5f, m_pivotY = 0.5f;
 
@@ -11,9 +18,13 @@ class CImage
 	ID2D1Bitmap* m_bitmap = nullptr;
 
 public:
-	CImage();
-	~CImage();
+	CSprite();
+	~CSprite();
 	void SetBitmap(ID2D1Bitmap* _bitmap) { m_bitmap = _bitmap; }
 	void SetPixel(DWORD* _pixel) { m_pixel = _pixel; }
+
+	ID2D1Bitmap* GetBitmap() const { return m_bitmap; }
+	int GetWidth() const { return m_size.right - m_size.left; }
+	int GetHeight() const { return m_size.bottom - m_size.top; }
 };
 

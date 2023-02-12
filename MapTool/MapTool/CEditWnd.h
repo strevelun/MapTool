@@ -1,17 +1,23 @@
 #pragma once
 
 #include "CBaseWnd.h"
+#include "CMouse.h"
 
 #include <vector>
 
-class CImage;
+class CSprite;
 
 class CEditWnd
 	: CBaseWnd
 {
 private:
 	HWND m_hTreeView;
-	std::vector<CImage*> m_vecImage;
+	std::vector<CSprite*> m_vecImage;
+	CMouse m_mouse;
+
+private:
+	void RenderPalette();
+	void RenderBoard();
 
 public:
 	CEditWnd();
