@@ -2,6 +2,7 @@
 
 #include <d2d1.h>
 #include <string>
+#include <vector>
 
 class CSprite;
 
@@ -18,5 +19,7 @@ public:
 	void SetMousePointer(int _xpos, int _ypos);
 	void SetXPos(int _xpos) { m_xpos = _xpos; }
 	void SetYPos(int _ypos) { m_ypos = _ypos; }
+
+	void PutSprite(int _xpos, int _ypos, std::vector<std::vector<int>>& _vecBoard);
 };
 

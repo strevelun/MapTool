@@ -33,6 +33,8 @@ public:
 		return m_inst;
 	}
 
+	CEditWnd* GetEditWnd() const { return m_editWnd; }
+
 	HRESULT Init(HINSTANCE hInstance, int nCmdShow);
 	int Run();
 

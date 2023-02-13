@@ -1,6 +1,8 @@
 #include "CMouse.h"
 #include "CResourceManager.h"
 #include "CSprite.h"
+#include "Settings.h"
+
 
 CMouse::CMouse()
 {
@@ -19,6 +21,8 @@ void CMouse::Render(ID2D1HwndRenderTarget* _pRenderTarget)
 
 void CMouse::SetMousePointer(int _xpos, int _ypos)
 {
+	if (_xpos >= PALETTE_WIDTH) return;
+
 	for (int i = 0; i < CResourceManager::GetInst()->GetVecSize("Tile"); i++)
 	{
 		CSprite* sprite = CResourceManager::GetInst()->GetImage("Tile", i);
@@ -51,4 +55,12 @@ void CMouse::SetMousePointer(int _xpos, int _ypos)
 			return;
 		}
 	}
+}
+
+void CMouse::PutSprite(int _xpos, int _ypos, std::vector<std::vector<int>>& _vecBoard)
+{
+	if (_xpos < PALETTE_WIDTH) return;
+	if (m_mousePointer == nullptr) return;
+
+	
 }

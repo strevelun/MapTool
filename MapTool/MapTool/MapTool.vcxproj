@@ -144,7 +144,11 @@
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CMouse.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MapTool.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
