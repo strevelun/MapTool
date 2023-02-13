@@ -86,6 +86,13 @@ void CEditWnd::RenderBoard()
 		for (int j = 0; j < s_gridX; j++)
 		{
 			m_pRenderTarget->DrawRectangle(D2D1::RectF(PALETTE_WIDTH + j * 40, i * 40, PALETTE_WIDTH + j * 40 + 40, i * 40 + 40),m_pBlackBrush);
+			
+			switch (m_pVecBoard->at(i)->at(j))
+			{
+			case Type::Tile:
+				m_pRenderTarget->DrawBitmap(m_pVecBoard->at(i)->at(j)->GetBitmap())
+				break;
+			}
 		}
 	}
 }
@@ -163,7 +170,7 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 	{
 		m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		m_mouse.PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		m_mouse.PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_pVecBoard);
 		break;
 	}
 	case WM_MOUSEMOVE:
@@ -179,6 +186,24 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		return 0;
 	}
+}
+
+void CEditWnd::SetBoard(int _gridX, int _gridY)
+{
+	if (m_pVecBoard != nullptr)
+		DestroyBoard();
+
+	m_pVecBoard = new std::vector<std::vector<int>*>(_gridY);
+	for (int i = 0; i < _gridY; i++)
+		(*m_pVecBoard)[i] = new std::vector<int>(_gridX);
+}
+
+void CEditWnd::DestroyBoard()
+{
+	for (int i = 0; i < m_pVecBoard->size(); i++)
+		delete (*m_pVecBoard)[i];
+	delete m_pVecBoard;
+	m_pVecBoard = nullptr;
 }
 
 INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -277,7 +302,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			EndDialog(hDlg, TRUE);
 
-			CApp::GetInst()->GetEditWnd()->
+			CApp::GetInst()->GetEditWnd()->SetBoard(s_gridX, s_GridY);
 
 			return TRUE;
 		}

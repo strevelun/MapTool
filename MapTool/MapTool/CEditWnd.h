@@ -11,10 +11,9 @@ class CEditWnd
 	: CBaseWnd
 {
 private:
-	HWND m_hTreeView;
-	std::vector<CSprite*> m_vecImage;
+	//std::vector<CSprite*> m_vecImage;
 	CMouse m_mouse;
-	std::vector<std::vector<int>>* m_pVecBoard;
+	std::vector<std::vector<CSprite*>*>* m_pVecBoard;
 
 private:
 	void RenderPalette();
@@ -27,7 +26,8 @@ public:
 
 	bool Create(int _w, int _h, int nCmdShow);
 	LRESULT Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
+	void SetBoard(int _gridX, int _gridY);
+	void DestroyBoard();
 
 };
 

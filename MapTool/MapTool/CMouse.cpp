@@ -30,6 +30,7 @@ void CMouse::SetMousePointer(int _xpos, int _ypos)
 		if (_xpos > rect.left && _xpos < rect.right && _ypos > rect.top && _ypos < rect.bottom)
 		{
 			m_mousePointer = sprite->GetBitmap();
+			m_spriteType = Type::Tile;
 			return;
 		}
 	}
@@ -41,6 +42,7 @@ void CMouse::SetMousePointer(int _xpos, int _ypos)
 		if (_xpos > rect.left && _xpos < rect.right && _ypos > rect.top && _ypos < rect.bottom)
 		{
 			m_mousePointer = sprite->GetBitmap();
+			m_spriteType = Type::Block;
 			return;
 		}
 	}
@@ -52,12 +54,13 @@ void CMouse::SetMousePointer(int _xpos, int _ypos)
 		if (_xpos > rect.left && _xpos < rect.right && _ypos > rect.top && _ypos < rect.bottom)
 		{
 			m_mousePointer = sprite->GetBitmap();
+			m_spriteType = Type::Character;
 			return;
 		}
 	}
 }
 
-void CMouse::PutSprite(int _xpos, int _ypos, std::vector<std::vector<int>>& _vecBoard)
+void CMouse::PutSprite(int _xpos, int _ypos, std::vector<std::vector<int>>* _vecBoard)
 {
 	if (_xpos < PALETTE_WIDTH) return;
 	if (m_mousePointer == nullptr) return;
