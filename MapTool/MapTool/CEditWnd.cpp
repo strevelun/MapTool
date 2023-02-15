@@ -121,10 +121,30 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case ID_NEW_MAP:
+		{
 			//DialogBox(m_hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd,DialogProc);
 			HWND dialog = CreateDialog(m_hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DialogProc);
 			ShowWindow(dialog, SW_SHOW);
 			InvalidateRgn(hWnd, NULL, false);
+			break;
+		}
+		case ID_LOAD_MAP:
+			break;
+
+		case ID_SAVE_MAP:
+			break;
+
+		case ID_BLOCKED:
+			m_menuEvent = MenuEvent::Blocked;
+			m_mouse.ResetMousePointer();
+			break;
+		case ID_SPAWN:
+			m_menuEvent = MenuEvent::Spawn;
+			m_mouse.ResetMousePointer();
+			break;
+		case ID_DEFAULT:
+			m_menuEvent = MenuEvent::Default;
+			m_mouse.ResetMousePointer();
 			break;
 		}
 	}
@@ -158,8 +178,15 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_LBUTTONUP:
 	{
-		m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
+		if (m_menuEvent == MenuEvent::Default)
+		{
+			m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
+		}
+		else
+		{
+			Board::GetInst()->PutEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
+		}
 		InvalidateRgn(hWnd, NULL, false);
 		break;
 	}

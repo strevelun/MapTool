@@ -3,6 +3,7 @@
 #include "CBaseWnd.h"
 #include "CMouse.h"
 #include "Board.h"
+#include "Settings.h"
 
 #include <vector>
 
@@ -14,6 +15,7 @@ class CEditWnd
 private:
 	//std::vector<CSprite*> m_vecImage;
 	CMouse m_mouse;
+	MenuEvent m_menuEvent;
 
 private:
 	void RenderPalette();

@@ -55,6 +55,14 @@ BEGIN
     POPUP "∆ƒ¿œ"
     BEGIN
         MENUITEM "ªı ∏ ",                         ID_NEW_MAP
+        MENUITEM "∏  ¿˙¿Â",                        ID_SAVE_MAP
+        MENUITEM "∏  ∑ŒµÂ",                        ID_LOAD_MAP
+    END
+    POPUP "¿Ã∫•∆Æ"
+    BEGIN
+        MENUITEM "Blocked",                     ID_BLOCKED
+        MENUITEM "Spawn",                       ID_SPAWN
+        MENUITEM "Default",                     ID_DEFAULT
     END
 END
 

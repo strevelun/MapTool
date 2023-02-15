@@ -58,7 +58,40 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 		}
 	}
 
-	
+	for (int i = 0; i < m_gridY; i++)
+	{
+		for (int j = 0; j < m_gridX; j++)
+		{
+			MenuEvent menuEvent = m_pVecBoardEvent->at(i)->at(j);
+			switch (menuEvent)
+			{
+			case MenuEvent::Blocked:
+			{
+				ID2D1SolidColorBrush* brush = nullptr;
+				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
+				brush->SetOpacity(0.5);
+				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
+					i * BOARD_BOX_SIZE,
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE), brush, 5);
+				brush->Release();
+				break;
+			}
+			case MenuEvent::Spawn:
+			{
+				ID2D1SolidColorBrush* brush = nullptr;
+				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua), &brush);
+				brush->SetOpacity(0.5);
+				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
+					i * BOARD_BOX_SIZE,
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE), brush, 5);
+				brush->Release();
+				break;
+			}
+			}
+		}
+	}
 }
 
 void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
@@ -87,6 +120,18 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 	}
 }
 
+void Board::PutEvent(int _xpos, int _ypos, MenuEvent _event)
+{
+	if (_xpos < PALETTE_WIDTH) return;
+	if (_xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
+	if (_ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+
+	int x = (_xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
+	int y = _ypos / BOARD_BOX_SIZE;
+
+	m_pVecBoardEvent->at(y)->at(x) = _event;
+}
+
 void Board::SetBoard(int _gridX, int _gridY)
 {
 	DestroyBoard();
@@ -97,11 +142,13 @@ void Board::SetBoard(int _gridX, int _gridY)
 	m_pVecBoardTile = new std::vector<std::vector<CSprite>*>(_gridY);
 	m_pVecBoardObject = new std::vector<std::vector<CSprite>*>(_gridY);
 	m_pVecBoardCharacter = new std::vector<std::vector<CSprite>*>(_gridY);
+	m_pVecBoardEvent = new std::vector<std::vector<MenuEvent>*>(_gridY);
 	for (int i = 0; i < _gridY; i++)
 	{
 		(*m_pVecBoardTile)[i] = new std::vector<CSprite>(_gridX);
 		(*m_pVecBoardObject)[i] = new std::vector<CSprite>(_gridX);
 		(*m_pVecBoardCharacter)[i] = new std::vector<CSprite>(_gridX);
+		(*m_pVecBoardEvent)[i] = new std::vector<MenuEvent>(_gridX);
 	}
 }
 
@@ -129,5 +176,13 @@ void Board::DestroyBoard()
 			delete (*m_pVecBoardCharacter)[i];
 		delete m_pVecBoardCharacter;
 		m_pVecBoardCharacter = nullptr;
+	}
+
+	if (m_pVecBoardEvent != nullptr)
+	{
+		for (int i = 0; i < m_pVecBoardEvent->size(); i++)
+			delete (*m_pVecBoardEvent)[i];
+		delete m_pVecBoardEvent;
+		m_pVecBoardEvent = nullptr;
 	}
 }
