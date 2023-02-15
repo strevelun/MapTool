@@ -13,7 +13,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow)
 
 
 	m_editWnd = new CEditWnd(hInstance);
-	if (m_editWnd->Create(1600, 800, nCmdShow) == false)
+	if (m_editWnd->Create(1680, 1024, nCmdShow) == false)
 		return E_FAIL;
 
 	return S_OK;

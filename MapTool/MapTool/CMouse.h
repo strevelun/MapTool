@@ -8,9 +8,8 @@ class CSprite;
 
 class CMouse
 {
-	ID2D1Bitmap* m_mousePointer = nullptr;
-	int m_xpos, m_ypos; // ±Ù∫˝¿” «ÿ∞·
-	Type m_spriteType;
+	CSprite* m_mousePointer = nullptr;
+	int m_xpos, m_ypos; // ±Ù∫˝¿” «ÿ∞·B
 
 public:
 	CMouse();
@@ -21,6 +20,6 @@ public:
 	void SetXPos(int _xpos) { m_xpos = _xpos; }
 	void SetYPos(int _ypos) { m_ypos = _ypos; }
 
-	void PutSprite(int _xpos, int _ypos, std::vector<std::vector<int>*>* _vecBoard);
+	CSprite* GetMousePointer() const { return m_mousePointer; }
 };
 

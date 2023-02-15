@@ -42,9 +42,11 @@ public:
 		return m_mapImage.at(key).at(idx);
 	}
 
+	CSprite* GetBlockTopImage(CSprite* _sprite);
+
 	int GetVecSize(std::string key)
 	{
-		if (m_mapImage.empty()) return -1;
+		if (m_mapImage.find(key) == m_mapImage.end()) return -1;
 		return m_mapImage.at(key).size();
 	}
 };

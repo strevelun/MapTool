@@ -2,6 +2,7 @@
 
 #include "CBaseWnd.h"
 #include "CMouse.h"
+#include "Board.h"
 
 #include <vector>
 
@@ -13,11 +14,10 @@ class CEditWnd
 private:
 	//std::vector<CSprite*> m_vecImage;
 	CMouse m_mouse;
-	std::vector<std::vector<CSprite*>*>* m_pVecBoard;
+	Board* m_board;
 
 private:
 	void RenderPalette();
-	void RenderBoard();
 
 public:
 	CEditWnd();
@@ -26,8 +26,6 @@ public:
 
 	bool Create(int _w, int _h, int nCmdShow);
 	LRESULT Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	void SetBoard(int _gridX, int _gridY);
-	void DestroyBoard();
-
+	Board* GetBoard() const { return m_board; }
 };
 

@@ -71,10 +71,10 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
 
                 delete[] str;
 
-                Type type;
+                //Type type;
 
                 fread(&clipSize, sizeof(int), 1, pFile);
-                fread(&type, sizeof(Type), 1, pFile);
+                //fread(&type, sizeof(Type), 1, pFile);
 
                 for (int i = 0; i < clipSize; i++)
                 {
@@ -96,7 +96,7 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                     _pRenderTarget->CreateBitmap(D2D1::SizeU(width, height), pixel, width * 4, &bpp, &bitmap);
                     image->SetBitmap(bitmap);
 
-                    switch(type)
+                    switch(image->GetType())
                     {
                     case Type::Tile:
                         m_mapImage["Tile"].push_back(image);
@@ -122,4 +122,16 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
         return;
     }
     
+}
+
+CSprite* CResourceManager::GetBlockTopImage(CSprite* _sprite)
+{
+    std::vector<CSprite*>::iterator iter = m_mapImage["Block"].begin();
+    std::vector<CSprite*>::iterator end = m_mapImage["Block"].end();
+
+    for (; iter != end; iter++)
+    {
+        if (_sprite->GetBitmap() == (*iter)->GetBitmap())
+            return *(iter-1);
+    }
 }
