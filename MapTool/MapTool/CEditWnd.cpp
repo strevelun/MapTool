@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "resource.h"
 #include "CApp.h"
+#include "Board.h"
 
 #include <commctrl.h>
 #include <windowsx.h>
@@ -93,7 +94,6 @@ CEditWnd::CEditWnd(HINSTANCE _hInst)
 
 CEditWnd::~CEditWnd()
 {
-	delete m_board;
 }
 
 bool CEditWnd::Create(int _w, int _h, int nCmdShow)
@@ -132,7 +132,6 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE:
 	{
-		m_board = new Board();
 
 		break;
 	}
@@ -147,8 +146,7 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 			RenderPalette();
-			m_board->RenderBoard(m_pRenderTarget, m_pBlackBrush);
-			m_board->RenderObject(m_pRenderTarget);
+			Board::GetInst()->RenderBoard(m_pRenderTarget, m_pBlackBrush);
 
 			m_mouse.Render(m_pRenderTarget);
 			m_pRenderTarget->EndDraw();
@@ -161,7 +159,7 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 	{
 		m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		m_board->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
+		Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
 		InvalidateRgn(hWnd, NULL, false);
 		break;
 	}
@@ -193,8 +191,6 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 
 }
-
-
 
 INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -292,7 +288,7 @@ INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			EndDialog(hDlg, TRUE);
 
-			CApp::GetInst()->GetEditWnd()->GetBoard()->SetBoard(s_gridX, s_gridY);
+			Board::GetInst()->SetBoard(s_gridX, s_gridY);
 
 			return TRUE;
 		}

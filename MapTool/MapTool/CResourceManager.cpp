@@ -95,6 +95,7 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                     image->SetPixel(pixel);
                     _pRenderTarget->CreateBitmap(D2D1::SizeU(width, height), pixel, width * 4, &bpp, &bitmap);
                     image->SetBitmap(bitmap);
+                    image->SetSize(D2D1::SizeF(width, height));
 
                     switch(image->GetType())
                     {
