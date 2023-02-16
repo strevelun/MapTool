@@ -2,6 +2,7 @@
 #include "Settings.h"
 #include "CMouse.h"
 #include "CResourceManager.h"
+#include "Camera.h"
 
 #include <stack>
 
@@ -22,18 +23,18 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 		for (int j = 0; j < m_gridX; j++)
 		{
 			_pRenderTarget->DrawRectangle(
-				D2D1::RectF(PALETTE_WIDTH + j * BOARD_BOX_SIZE,
-					i * BOARD_BOX_SIZE,
-					PALETTE_WIDTH + j * BOARD_BOX_SIZE + BOARD_BOX_SIZE,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE), _pBlackBrush);
+				D2D1::RectF(PALETTE_WIDTH + j * BOARD_BOX_SIZE + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+					PALETTE_WIDTH + j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), _pBlackBrush);
 			CSprite* sprite = &m_pVecBoardTile->at(i)->at(j);
 			if (sprite->GetBitmap() == nullptr)
 				continue;
 			_pRenderTarget->DrawBitmap(sprite->GetBitmap(), 
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
+				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
 		}
 	}
 	
@@ -45,10 +46,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 			if (sprite->GetBitmap() != nullptr)
 			{
 				_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-						i * BOARD_BOX_SIZE,
-						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
-						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
+					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+						i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
 				/*
 				_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetBlockTopImage(sprite)->GetBitmap(),
 					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
@@ -63,10 +64,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				continue;
 
 			_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE),
-					j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
+				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE ) + Camera::GetInst()->GetYPos(),
+					j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
 		}
 	}
 
@@ -82,10 +83,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				ID2D1SolidColorBrush* brush = nullptr;
 				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
 				brush->SetOpacity(0.8);
-				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE), brush, 5);
+				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), brush, 5);
 				brush->Release();
 				break;
 			}
@@ -106,16 +107,18 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				}
 
 				if(sprite != nullptr)
-					_pRenderTarget->DrawBitmap(sprite->GetBitmap(), D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE),
-						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH,
-						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
+					_pRenderTarget->DrawBitmap(sprite->GetBitmap(), D2D1::RectF(
+						j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) + Camera::GetInst()->GetYPos(),
+						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
 
 				brush->SetOpacity(0.8);
-				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE), brush, 5);
+				_pRenderTarget->DrawRectangle(D2D1::RectF(
+					j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), brush, 5);
 				brush->Release();
 				break;
 			}
@@ -126,15 +129,19 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 
 void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 {
-	if (_xpos < PALETTE_WIDTH) return;
-	if (_xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (_ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	int xpos = _xpos - Camera::GetInst()->GetXPos();
+	int ypos = _ypos - Camera::GetInst()->GetYPos();
+
+	if (xpos < PALETTE_WIDTH) return;
+	if (ypos < 0) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
 
 	CSprite *sprite = _mouse->GetMousePointer();
 	if (sprite == nullptr) return;
 	
-	int x = (_xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = _ypos / BOARD_BOX_SIZE;
+	int x = (xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
+	int y = ypos / BOARD_BOX_SIZE;
 
 	switch (sprite->GetType())
 	{
@@ -152,24 +159,32 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 
 void Board::RemoveEvent(int _xpos, int _ypos, MenuEvent _event)
 {
-	if (_xpos < PALETTE_WIDTH) return;
-	if (_xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (_ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	int xpos = _xpos - Camera::GetInst()->GetXPos();
+	int ypos = _ypos - Camera::GetInst()->GetYPos();
 
-	int x = (_xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = _ypos / BOARD_BOX_SIZE;
+	if (xpos < PALETTE_WIDTH) return;
+	if (ypos < 0) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+
+	int x = (xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
+	int y = ypos / BOARD_BOX_SIZE;
 
 	m_pVecBoardEvent->at(y)->at(x) = MenuEvent::Default;
 }
 
 void Board::PutEvent(int _xpos, int _ypos, MenuEvent _event)
 {
-	if (_xpos < PALETTE_WIDTH) return;
-	if (_xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (_ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	int xpos = _xpos - Camera::GetInst()->GetXPos();
+	int ypos = _ypos - Camera::GetInst()->GetYPos();
 
-	int x = (_xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = _ypos / BOARD_BOX_SIZE;
+	if (xpos < PALETTE_WIDTH) return;
+	if (ypos < 0) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+
+	int x = (xpos  - PALETTE_WIDTH) / BOARD_BOX_SIZE;
+	int y = ypos / BOARD_BOX_SIZE;
 
 	if (_event == MenuEvent::Spawn_Character)
 		for (int i = 0; i < m_gridY; i++)

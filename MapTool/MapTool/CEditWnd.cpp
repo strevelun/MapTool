@@ -6,6 +6,7 @@
 #include "CApp.h"
 #include "Board.h"
 #include "FileManager.h"
+#include "Camera.h"
 
 #include <commctrl.h>
 #include <windowsx.h>
@@ -22,6 +23,9 @@ void CEditWnd::RenderPalette()
 
 	int xpos = 0, ypos = 0;
 	int w = 40, h = 40;
+	RECT rect = {0};
+	GetClientRect(m_hWnd, &rect);
+	m_pRenderTarget->FillRectangle(D2D1::RectF(0, 0, PALETTE_WIDTH, rect.bottom), m_pWhiteBrush);
 
 	std::wstring wstr = L"Å¸ÀÏ";
 	m_pRenderTarget->DrawTextW(wstr.c_str(), wstr.length(), m_pDWTextFormat, D2D1::RectF(50, 0, 250, 40), m_pBlackBrush);
@@ -104,7 +108,7 @@ CEditWnd::~CEditWnd()
 bool CEditWnd::Create(int _w, int _h, int nCmdShow)
 {
 	if (CBaseWnd::Create(L"EditClass", _w, _h, nCmdShow,
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, IDR_MENU1) == false)
+		WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, IDR_MENU1) == false)
 		return false;
 
 	CResourceManager::GetInst()->LoadFile(m_pRenderTarget);
@@ -175,8 +179,8 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			m_pRenderTarget->BeginDraw();
 			m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
-			RenderPalette();
 			Board::GetInst()->RenderBoard(m_pRenderTarget, m_pBlackBrush);
+			RenderPalette();
 
 			m_mouse.Render(m_pRenderTarget);
 			m_pRenderTarget->EndDraw();
@@ -185,6 +189,24 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	}
+
+	case WM_KEYDOWN:
+		switch (wParam) {
+		case VK_LEFT:
+			Camera::GetInst()->UpdateXPos(15);
+			break;
+		case VK_RIGHT:
+			Camera::GetInst()->UpdateXPos(-15);
+			break;
+		case VK_UP:
+			Camera::GetInst()->UpdateYPos(15);
+			break;
+		case VK_DOWN:
+			Camera::GetInst()->UpdateYPos(-15);
+			break;
+		}
+		InvalidateRect(hWnd, NULL, false);
+		break;
 
 	case WM_LBUTTONUP:
 	{
