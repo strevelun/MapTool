@@ -5,6 +5,7 @@
 #include "resource.h"
 #include "CApp.h"
 #include "Board.h"
+#include "FileManager.h"
 
 #include <commctrl.h>
 #include <windowsx.h>
@@ -47,6 +48,8 @@ void CEditWnd::RenderPalette()
 
 	for (int i = 0; i < CResourceManager::GetInst()->GetVecSize("Block"); i++)
 	{
+		if (i % 2 == 0) continue;
+
 		sprite = CResourceManager::GetInst()->GetImage("Block", i);
 		D2D1_RECT_F rect = D2D1::RectF(xpos, ypos, xpos + w, ypos + h);
 		sprite->SetRect(rect);
@@ -122,24 +125,29 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case ID_NEW_MAP:
 		{
-			//DialogBox(m_hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd,DialogProc);
 			HWND dialog = CreateDialog(m_hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DialogProc);
 			ShowWindow(dialog, SW_SHOW);
 			InvalidateRgn(hWnd, NULL, false);
 			break;
 		}
 		case ID_LOAD_MAP:
+			Board::GetInst()->LoadMap(hWnd, m_pRenderTarget);
 			break;
 
 		case ID_SAVE_MAP:
+			Board::GetInst()->SaveMap(hWnd);
 			break;
 
 		case ID_BLOCKED:
 			m_menuEvent = MenuEvent::Blocked;
 			m_mouse.ResetMousePointer();
 			break;
-		case ID_SPAWN:
-			m_menuEvent = MenuEvent::Spawn;
+		case ID_SPAWN_CHARACTER:
+			m_menuEvent = MenuEvent::Spawn_Character;
+			m_mouse.ResetMousePointer();
+			break;
+		case ID_SPAWN_MONSTER:
+			m_menuEvent = MenuEvent::Spawn_Monster;
 			m_mouse.ResetMousePointer();
 			break;
 		case ID_DEFAULT:
@@ -190,6 +198,14 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRgn(hWnd, NULL, false);
 		break;
 	}
+
+	case WM_RBUTTONUP:
+		if (m_menuEvent == MenuEvent::Blocked || m_menuEvent == MenuEvent::Spawn_Character || m_menuEvent == MenuEvent::Spawn_Monster)
+		{
+			Board::GetInst()->RemoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
+			InvalidateRgn(hWnd, NULL, false);
+		}
+		break;
 	case WM_MOUSEMOVE:
 		m_mouse.SetXPos(GET_X_LPARAM(lParam));
 		m_mouse.SetYPos(GET_Y_LPARAM(lParam));

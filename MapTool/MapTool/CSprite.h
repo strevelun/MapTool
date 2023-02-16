@@ -1,14 +1,7 @@
 #pragma once
 
 #include <d2d1.h>
-
-enum class Type
-{
-	Tile,
-	Block,
-	Character,
-	None
-};
+#include "Settings.h"
 
 class CSprite
 {
@@ -32,5 +25,7 @@ public:
 	int GetHeight() const { return m_size.height; }
 	D2D1_RECT_F GetRect() const { return m_rect; }
 	Type GetType() const { return m_type; }
+
+	DWORD* GetPixel() const { return m_pixel; }
 };
 

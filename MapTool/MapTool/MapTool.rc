@@ -61,7 +61,11 @@ BEGIN
     POPUP "이벤트"
     BEGIN
         MENUITEM "Blocked",                     ID_BLOCKED
-        MENUITEM "Spawn",                       ID_SPAWN
+        POPUP "Spawn"
+        BEGIN
+            MENUITEM "캐릭터", ID_SPAWN_CHARACTER
+            MENUITEM "몬스터", ID_SPAWN_MONSTER
+        END
         MENUITEM "Default",                     ID_DEFAULT
     END
 END

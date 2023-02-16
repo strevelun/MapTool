@@ -7,5 +7,20 @@ enum class MenuEvent
 {
 	Default,
 	Blocked,
-	Spawn
+	Spawn_Character,
+	Spawn_Monster
+};
+
+enum class Type
+{
+	Tile,
+	Block,
+	Character,
+	None
+};
+
+enum class CharacterType
+{
+	Player,
+	Monster
 };

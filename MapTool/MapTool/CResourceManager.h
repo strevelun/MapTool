@@ -17,7 +17,6 @@ private:
 	~CResourceManager();
 	std::map<std::string, std::vector<CSprite*>> m_mapImage; // todo : delete
 
-
 public:
 	static CResourceManager* GetInst()
 	{

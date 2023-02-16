@@ -17,6 +17,9 @@ class Board
 
 	int m_gridX = 0, m_gridY = 0;
 
+	Board();
+	~Board();
+
 public:
 	static Board* GetInst() {
 		if (m_inst == nullptr)
@@ -33,7 +36,11 @@ public:
 	void RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBlackBrush);
 
 	void PutSprite(int _xpos, int _ypos, CMouse* _mouse);
+	void RemoveEvent(int _xpos, int _ypos, MenuEvent _event);
 	void PutEvent(int _xpos, int _ypos, MenuEvent _event);
 	void SetBoard(int _gridX, int _gridY);
 	void DestroyBoard();
+
+	void SaveMap(HWND _hWnd);
+	void LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget);
 };

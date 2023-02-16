@@ -135,4 +135,5 @@ CSprite* CResourceManager::GetBlockTopImage(CSprite* _sprite)
         if (_sprite->GetBitmap() == (*iter)->GetBitmap())
             return *(iter-1);
     }
+    return nullptr;
 }
