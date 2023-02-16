@@ -62,6 +62,7 @@ void CEditWnd::RenderPalette()
 		}
 	}
 
+	/*
 	xpos = 0;
 	ypos += h;
 	wstr = L"Ä³¸¯ÅÍ";
@@ -81,6 +82,7 @@ void CEditWnd::RenderPalette()
 			ypos += h;
 		}
 	}
+	*/
 }
 
 

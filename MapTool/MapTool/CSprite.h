@@ -27,5 +27,6 @@ public:
 	Type GetType() const { return m_type; }
 
 	DWORD* GetPixel() const { return m_pixel; }
+	void CreateAndSetBitmap(ID2D1RenderTarget* _pRenderTarget, DWORD* _pixel);
 };
 

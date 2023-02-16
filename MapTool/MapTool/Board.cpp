@@ -93,10 +93,24 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 			case MenuEvent::Spawn_Monster:
 			{
 				ID2D1SolidColorBrush* brush = nullptr;
-				if(menuEvent == MenuEvent::Spawn_Character)
+				CSprite* sprite = nullptr;
+				if (menuEvent == MenuEvent::Spawn_Character)
+				{
 					_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua), &brush);
+					sprite = CResourceManager::GetInst()->GetImage("Character", 0);
+				}
 				else
+				{
 					_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Orange), &brush);
+					sprite = CResourceManager::GetInst()->GetImage("Character", 1);
+				}
+
+				if(sprite != nullptr)
+					_pRenderTarget->DrawBitmap(sprite->GetBitmap(), D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
+						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE),
+						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH,
+						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
+
 				brush->SetOpacity(0.8);
 				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
 					i * BOARD_BOX_SIZE,
@@ -355,15 +369,8 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);
 			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth()  * sprite.GetHeight());
 			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-			D2D1_BITMAP_PROPERTIES bpp;
-			bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-			bpp.dpiX = (FLOAT)0;
-			bpp.dpiY = (FLOAT)0;
-			ID2D1Bitmap* bitmap;
-			sprite.SetPixel(pixel);
-			_pRenderTarget->CreateBitmap(D2D1::SizeU(sprite.GetWidth(), sprite.GetHeight()), pixel, sprite.GetWidth() * 4, &bpp, &bitmap);
-			sprite.SetBitmap(bitmap);
+
+			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
 			m_pVecBoardTile->at(i)->at(j) = sprite;
 		}
 	}
@@ -375,15 +382,8 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);
 			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth() * sprite.GetHeight());
 			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-			D2D1_BITMAP_PROPERTIES bpp;
-			bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-			bpp.dpiX = (FLOAT)0;
-			bpp.dpiY = (FLOAT)0;
-			ID2D1Bitmap* bitmap;
-			sprite.SetPixel(pixel);
-			_pRenderTarget->CreateBitmap(D2D1::SizeU(sprite.GetWidth(), sprite.GetHeight()), pixel, sprite.GetWidth() * 4, &bpp, &bitmap);
-			sprite.SetBitmap(bitmap);
+
+			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
 			m_pVecBoardObject->at(i)->at(j) = sprite;
 		}
 	}
@@ -395,15 +395,8 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);
 			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth() * sprite.GetHeight());
 			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-			D2D1_BITMAP_PROPERTIES bpp;
-			bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-			bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-			bpp.dpiX = (FLOAT)0;
-			bpp.dpiY = (FLOAT)0;
-			ID2D1Bitmap* bitmap;
-			sprite.SetPixel(pixel);
-			_pRenderTarget->CreateBitmap(D2D1::SizeU(sprite.GetWidth(), sprite.GetHeight()), pixel, sprite.GetWidth() * 4, &bpp, &bitmap);
-			sprite.SetBitmap(bitmap);
+
+			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
 			m_pVecBoardCharacter->at(i)->at(j) = sprite;
 		}
 	}
