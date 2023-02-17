@@ -41,8 +41,7 @@ void CMouse::SetMousePointer(int _xpos, int _ypos)
 		D2D1_RECT_F rect = sprite->GetRect();
 		if (_xpos > rect.left && _xpos < rect.right && _ypos > rect.top && _ypos < rect.bottom)
 		{
-			if (i % 2 == 0)
-				sprite = CResourceManager::GetInst()->GetImage("Block", i+1);
+			sprite = CResourceManager::GetInst()->GetImage("Block", i);
 			m_mousePointer = sprite;
 			return;
 		}

@@ -47,9 +47,9 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 			{
 				_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
 					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
+						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) - (40 * 0.5) + Camera::GetInst()->GetYPos(),
 						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
+						i * BOARD_BOX_SIZE + (BOARD_BOX_SIZE) + Camera::GetInst()->GetYPos()));
 				/*
 				_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetBlockTopImage(sprite)->GetBitmap(),
 					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,

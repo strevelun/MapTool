@@ -52,8 +52,6 @@ void CEditWnd::RenderPalette()
 
 	for (int i = 0; i < CResourceManager::GetInst()->GetVecSize("Block"); i++)
 	{
-		if (i % 2 == 0) continue;
-
 		sprite = CResourceManager::GetInst()->GetImage("Block", i);
 		D2D1_RECT_F rect = D2D1::RectF(xpos, ypos, xpos + w, ypos + h);
 		sprite->SetRect(rect);
@@ -162,8 +160,6 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 	}
-	case WM_LBUTTONDOWN:
-		break;
 	case WM_CREATE:
 	{
 
@@ -208,8 +204,13 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hWnd, NULL, false);
 		break;
 
+	case WM_LBUTTONDOWN:
+		m_mouse.SetPress(true);
+		break;
+
 	case WM_LBUTTONUP:
 	{
+		
 		if (m_menuEvent == MenuEvent::Default)
 		{
 			m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -219,6 +220,8 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			Board::GetInst()->PutEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
 		}
+		
+		m_mouse.SetPress(false);
 		InvalidateRgn(hWnd, NULL, false);
 		break;
 	}
@@ -229,10 +232,30 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Board::GetInst()->RemoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
 			InvalidateRgn(hWnd, NULL, false);
 		}
+		/*
+		else if (m_menuEvent == MenuEvent::Default)
+		{
+			Board::GetInst()->Remove
+		}
+		*/
 		break;
 	case WM_MOUSEMOVE:
 		m_mouse.SetXPos(GET_X_LPARAM(lParam));
 		m_mouse.SetYPos(GET_Y_LPARAM(lParam));
+
+		if (m_mouse.IsPressed())
+		{
+			if (m_menuEvent == MenuEvent::Default)
+			{
+				//m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
+			}
+			else
+			{
+				Board::GetInst()->PutEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
+			}
+		}
+
 		InvalidateRgn(hWnd, NULL, false);
 		break;
 
