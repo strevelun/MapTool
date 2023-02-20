@@ -18,6 +18,10 @@ Board::~Board()
 
 void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBlackBrush)
 {
+	int cameraX = Camera::GetInst()->GetXPos();
+	int cameraY = Camera::GetInst()->GetYPos();
+
+
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
@@ -291,7 +295,6 @@ void Board::SaveMap(HWND _hWnd)
 		{
 			sprite = m_pVecBoardTile->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-			fwrite(&sprite.GetPixel()[0], sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
 		}
 	}
 
@@ -301,7 +304,6 @@ void Board::SaveMap(HWND _hWnd)
 		{
 			sprite = m_pVecBoardObject->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-			fwrite(&sprite.GetPixel()[0], sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
 		}
 	}
 
@@ -311,7 +313,6 @@ void Board::SaveMap(HWND _hWnd)
 		{
 			sprite = m_pVecBoardCharacter->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-			fwrite(&sprite.GetPixel()[0], sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
 		}
 	}
 
@@ -344,6 +345,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 
 	if (GetOpenFileName(&ofn) == 0) return;
 
+	// strtok
 	std::stack<char> s;
 	int i = 0;
 
@@ -382,10 +384,8 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 		for (int j = 0; j < m_gridX; j++)
 		{
 			fread(&sprite, sizeof(CSprite), 1, pFile);
-			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth()  * sprite.GetHeight());
-			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-
-			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
+			if (sprite.GetWidth() > 0)
+				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
 			m_pVecBoardTile->at(i)->at(j) = sprite;
 		}
 	}
@@ -395,10 +395,9 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 		for (int j = 0; j < m_gridX; j++)
 		{
 			fread(&sprite, sizeof(CSprite), 1, pFile);
-			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth() * sprite.GetHeight());
-			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-
-			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
+			
+			if (sprite.GetWidth() > 0)
+				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
 			m_pVecBoardObject->at(i)->at(j) = sprite;
 		}
 	}
@@ -407,11 +406,9 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			fread(&sprite, sizeof(CSprite), 1, pFile);
-			DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * sprite.GetWidth() * sprite.GetHeight());
-			fread(pixel, sizeof(DWORD) * sprite.GetWidth(), sprite.GetHeight(), pFile);
-
-			sprite.CreateAndSetBitmap(_pRenderTarget, pixel);
+			fread(&sprite, sizeof(CSprite), 1, pFile);			
+			if (sprite.GetWidth() > 0)
+				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Character", sprite.GetIdx())->GetBitmap());
 			m_pVecBoardCharacter->at(i)->at(j) = sprite;
 		}
 	}

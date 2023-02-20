@@ -20,6 +20,10 @@ CResourceManager::~CResourceManager()
 
 void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
 {
+    int tileIdx = 0;
+    int blockIdx = 0;
+    int characterIdx = 0;
+
     std::wstring folder = L".\\resource\\";
     std::wstring searchPath = folder + L"*.*";
 
@@ -100,12 +104,15 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                     switch(image->GetType())
                     {
                     case Type::Tile:
+                        image->SetIdx(tileIdx++);
                         m_mapImage["Tile"].push_back(image);
                         break;
                     case Type::Block:
+                        image->SetIdx(blockIdx++);
                         m_mapImage["Block"].push_back(image);
                         break;
                     case Type::Character:
+                        image->SetIdx(characterIdx++);
                         m_mapImage["Character"].push_back(image);
                         break;
                     }
