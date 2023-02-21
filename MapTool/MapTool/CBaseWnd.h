@@ -5,19 +5,14 @@
 #include <dwrite.h>
 
 
-
+// 모든 창들이 가져야할 공통적인 요소들이 포함
 class CBaseWnd
 {
 protected:
 	HWND m_hWnd;
 	HINSTANCE m_hInst;
 	ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;
-	ID2D1SolidColorBrush* m_pBlackBrush = nullptr;
-	ID2D1SolidColorBrush* m_pRedBrush = nullptr;
-	ID2D1SolidColorBrush* m_pWhiteBrush = nullptr;
 
-	IDWriteFactory* m_pDWriteFactory = nullptr;
-	IDWriteTextFormat* m_pDWTextFormat = nullptr;
 
 public:
 	CBaseWnd();

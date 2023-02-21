@@ -18,60 +18,36 @@ Board::~Board()
 
 void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBlackBrush)
 {
+	if (m_vecLayer == nullptr) return;
+
+	m_vecLayer->at(0).Render(_pRenderTarget, _pBlackBrush, m_gridX, m_gridY);
+
 	int cameraX = Camera::GetInst()->GetXPos();
 	int cameraY = Camera::GetInst()->GetYPos();
 
-
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			_pRenderTarget->DrawRectangle(
-				D2D1::RectF(PALETTE_WIDTH + j * BOARD_BOX_SIZE + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
-					PALETTE_WIDTH + j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), _pBlackBrush);
-			CSprite* sprite = &m_pVecBoardTile->at(i)->at(j);
-			if (sprite->GetBitmap() == nullptr)
-				continue;
-			_pRenderTarget->DrawBitmap(sprite->GetBitmap(), 
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
-		}
-	}
-	
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			CSprite* sprite = &m_pVecBoardObject->at(i)->at(j);
+			CSprite* sprite = m_vecLayer->at(1).GetSprite(j, i);
 			if (sprite->GetBitmap() != nullptr)
 			{
 				_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) - (40 * 0.5) + Camera::GetInst()->GetYPos(),
-						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE + (BOARD_BOX_SIZE) + Camera::GetInst()->GetYPos()));
-				/*
-				_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetBlockTopImage(sprite)->GetBitmap(),
-					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH,
-						(i - 1) * BOARD_BOX_SIZE,
-						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH,
-						(i - 1) * BOARD_BOX_SIZE + BOARD_BOX_SIZE));
-						*/
+					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) - (40 * 0.5) + cameraY,
+						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+						i * BOARD_BOX_SIZE + (BOARD_BOX_SIZE) +cameraY));
 			}
 
-			sprite = &m_pVecBoardCharacter->at(i)->at(j);
+			sprite = m_vecLayer->at(2).GetSprite(j, i);
 			if (sprite->GetBitmap() == nullptr)
 				continue;
 
 			_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE ) + Camera::GetInst()->GetYPos(),
-					j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
+				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE ) + cameraY,
+					j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY));
 		}
 	}
 
@@ -87,10 +63,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				ID2D1SolidColorBrush* brush = nullptr;
 				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
 				brush->SetOpacity(0.8);
-				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), brush, 5);
+				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE + cameraY,
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY), brush, 5);
 				brush->Release();
 				break;
 			}
@@ -112,17 +88,17 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 
 				if(sprite != nullptr)
 					_pRenderTarget->DrawBitmap(sprite->GetBitmap(), D2D1::RectF(
-						j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) + Camera::GetInst()->GetYPos(),
-						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()));
+						j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) + cameraY,
+						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + cameraX,
+						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY));
 
 				brush->SetOpacity(0.8);
 				_pRenderTarget->DrawRectangle(D2D1::RectF(
-					j * BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + Camera::GetInst()->GetYPos(),
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + Camera::GetInst()->GetXPos(),
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + Camera::GetInst()->GetYPos()), brush, 5);
+					j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE + cameraY,
+					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
+					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY), brush, 5);
 				brush->Release();
 				break;
 			}
@@ -150,13 +126,13 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 	switch (sprite->GetType())
 	{
 	case Type::Tile:
-		m_pVecBoardTile->at(y)->at(x) = *sprite;
+		m_vecLayer->at(0).PutSprite(x, y, sprite);
 		break;
 	case Type::Block:
-		m_pVecBoardObject->at(y)->at(x) = *sprite;
+		m_vecLayer->at(1).PutSprite(x, y, sprite);
 		break;
 	case Type::Character:
-		m_pVecBoardCharacter->at(y)->at(x) = *sprite;
+		m_vecLayer->at(2).PutSprite(x, y, sprite);
 		break;
 	}
 }
@@ -205,54 +181,27 @@ void Board::SetBoard(int _gridX, int _gridY)
 	m_gridX = _gridX;
 	m_gridY = _gridY;
 
-	m_pVecBoardTile = new std::vector<std::vector<CSprite>*>(_gridY);
-	m_pVecBoardObject = new std::vector<std::vector<CSprite>*>(_gridY);
-	m_pVecBoardCharacter = new std::vector<std::vector<CSprite>*>(_gridY);
-	m_pVecBoardEvent = new std::vector<std::vector<MenuEvent>*>(_gridY);
-	for (int i = 0; i < _gridY; i++)
+	m_vecLayer = new std::vector<Layer>(3);
+
+	for (int i = 0; i < m_vecLayer->size(); i++)
 	{
-		(*m_pVecBoardTile)[i] = new std::vector<CSprite>(_gridX);
-		(*m_pVecBoardObject)[i] = new std::vector<CSprite>(_gridX);
-		(*m_pVecBoardCharacter)[i] = new std::vector<CSprite>(_gridX);
-		(*m_pVecBoardEvent)[i] = new std::vector<MenuEvent>(_gridX);
+		m_vecLayer->at(i).SetVecSprite(_gridX, _gridY);
 	}
+	m_pVecBoardEvent = new std::vector<std::vector<MenuEvent>*>(_gridY);	
+	for (int i = 0; i < _gridY; i++)
+		(*m_pVecBoardEvent)[i] = new std::vector<MenuEvent>(_gridX);
 }
 
 void Board::DestroyBoard()
 {
+	if (m_vecLayer == nullptr) return;
+
 	m_gridX = 0;
 	m_gridY = 0;
 
-	if (m_pVecBoardTile != nullptr)
+	for (int i = 0; i < m_vecLayer->size(); i++)
 	{
-		for (int i = 0; i < m_pVecBoardTile->size(); i++)
-			delete (*m_pVecBoardTile)[i];
-		delete m_pVecBoardTile;
-		m_pVecBoardTile = nullptr;
-	}
-
-	if (m_pVecBoardObject != nullptr)
-	{
-		for (int i = 0; i < m_pVecBoardObject->size(); i++)
-			delete (*m_pVecBoardObject)[i];
-		delete m_pVecBoardObject;
-		m_pVecBoardObject = nullptr;
-	}
-
-	if (m_pVecBoardCharacter != nullptr)
-	{
-		for (int i = 0; i < m_pVecBoardCharacter->size(); i++)
-			delete (*m_pVecBoardCharacter)[i];
-		delete m_pVecBoardCharacter;
-		m_pVecBoardCharacter = nullptr;
-	}
-
-	if (m_pVecBoardEvent != nullptr)
-	{
-		for (int i = 0; i < m_pVecBoardEvent->size(); i++)
-			delete (*m_pVecBoardEvent)[i];
-		delete m_pVecBoardEvent;
-		m_pVecBoardEvent = nullptr;
+		m_vecLayer->at(i).DestroyVecSprite();
 	}
 }
 
@@ -289,29 +238,32 @@ void Board::SaveMap(HWND _hWnd)
 
 	CSprite sprite;
 
+	std::vector<std::vector<CSprite>*>* vecSprite = m_vecLayer->at(0).GetVecSprite();
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = m_pVecBoardTile->at(i)->at(j);
+			sprite = vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}
 
+	vecSprite = m_vecLayer->at(1).GetVecSprite();
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = m_pVecBoardObject->at(i)->at(j);
+			sprite = vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}
 
+	vecSprite = m_vecLayer->at(2).GetVecSprite();
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = m_pVecBoardCharacter->at(i)->at(j);
+			sprite = vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}
@@ -379,6 +331,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 	
 	CSprite sprite;
 
+	Layer layer = m_vecLayer->at(0);
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
@@ -386,10 +339,11 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
-			m_pVecBoardTile->at(i)->at(j) = sprite;
+			layer.PutSprite(j, i, &sprite);
 		}
 	}
 
+	layer = m_vecLayer->at(1);
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
@@ -398,10 +352,11 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
-			m_pVecBoardObject->at(i)->at(j) = sprite;
+			layer.PutSprite(j, i, &sprite);
 		}
 	}
 
+	layer = m_vecLayer->at(2);
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
@@ -409,7 +364,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);			
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Character", sprite.GetIdx())->GetBitmap());
-			m_pVecBoardCharacter->at(i)->at(j) = sprite;
+			layer.PutSprite(j, i, &sprite);
 		}
 	}
 

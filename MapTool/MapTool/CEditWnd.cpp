@@ -109,9 +109,32 @@ bool CEditWnd::Create(int _w, int _h, int nCmdShow)
 		WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, IDR_MENU1) == false)
 		return false;
 
+	HRESULT hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &m_pBlackBrush);
+	if (FAILED(hr)) return false;
+
+	hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &m_pRedBrush);
+	if (FAILED(hr)) return false;
+
+	hr = m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_pWhiteBrush);
+	if (FAILED(hr)) return false;
+
+	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&m_pDWriteFactory));
+	if (FAILED(hr)) return hr;
+
+	static const WCHAR fontName[] = L"Arial";
+	const FLOAT fontSize = 30.0f;
+
+	hr = m_pDWriteFactory->CreateTextFormat(fontName, NULL,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		fontSize, L"en-us", &m_pDWTextFormat);
+	if (FAILED(hr)) return hr;
+
 	CResourceManager::GetInst()->LoadFile(m_pRenderTarget);
 
 	InvalidateRgn(m_hWnd, NULL, true);
+
+	ShowWindow(m_hWnd, nCmdShow);
+	UpdateWindow(m_hWnd);
 
 	return true;
 }

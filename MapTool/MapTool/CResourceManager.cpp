@@ -131,16 +131,3 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
     }
     
 }
-
-CSprite* CResourceManager::GetBlockTopImage(CSprite* _sprite)
-{
-    std::vector<CSprite*>::iterator iter = m_mapImage["Block"].begin();
-    std::vector<CSprite*>::iterator end = m_mapImage["Block"].end();
-
-    for (; iter != end; iter++)
-    {
-        if (_sprite->GetBitmap() == (*iter)->GetBitmap())
-            return *(iter-1);
-    }
-    return nullptr;
-}

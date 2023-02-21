@@ -137,6 +137,7 @@
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CMouse.cpp" />
     <ClCompile Include="FileManager.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="MapTool.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +151,7 @@
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CMouse.h" />
     <ClInclude Include="FileManager.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
   </ItemGroup>

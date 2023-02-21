@@ -2,6 +2,7 @@
 
 #include "CSprite.h"
 #include "Settings.h"
+#include "Layer.h"
 
 #include <vector>
 
@@ -10,16 +11,16 @@ class CMouse;
 class Board
 {
 	static Board* m_inst;
-	std::vector<std::vector<CSprite>*>* m_pVecBoardTile;
-	std::vector<std::vector<CSprite>*>* m_pVecBoardObject;
-	std::vector<std::vector<CSprite>*>* m_pVecBoardCharacter;
+	//std::vector<std::vector<CSprite>*>* m_pVecBoardTile;
+	//std::vector<std::vector<CSprite>*>* m_pVecBoardObject;
+	//std::vector<std::vector<CSprite>*>* m_pVecBoardCharacter;
+	std::vector<Layer>* m_vecLayer;
 	std::vector<std::vector<MenuEvent>*>* m_pVecBoardEvent;
 
 	int m_gridX = 0, m_gridY = 0;
 
 	Board();
 	~Board();
-
 public:
 	static Board* GetInst() {
 		if (m_inst == nullptr)
