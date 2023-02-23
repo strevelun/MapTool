@@ -27,7 +27,7 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 		for (int j = 0; j < m_gridX; j++)
 		{
 			CSprite* sprite = m_vecLayer->at(1).GetSprite(j, i);
-			if (sprite->GetBitmap() != nullptr)
+			if (sprite != nullptr)
 				sprite->Render(_pRenderTarget, j, i);
 		}
 	}
@@ -109,6 +109,39 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 	//case Type::Character:
 	//	m_vecLayer->at(2).AddSprite(x, y, sprite);
 	//	break;
+	}
+}
+
+void Board::RemoveSprite(int _xpos, int _ypos)
+{
+	int cameraX = Camera::GetInst()->GetXPos();
+	int cameraY = Camera::GetInst()->GetYPos();
+
+	float cameraScale = Camera::GetInst()->GetScale();
+	int xpos = (_xpos - cameraX);
+	int ypos = (_ypos - cameraY);
+
+	if (xpos < PALETTE_WIDTH) return;
+	if (ypos < 0) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE * cameraScale) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE * cameraScale)) return;
+
+	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
+	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
+
+	CSprite* sprite = m_vecLayer->at(1).GetSprite(x, y);
+
+	if (sprite != nullptr)
+	{
+		m_vecLayer->at(1).AddSprite(x, y, nullptr);
+		return;
+	}
+
+	sprite = m_vecLayer->at(0).GetSprite(x, y);
+	if (sprite != nullptr)
+	{
+		m_vecLayer->at(0).AddSprite(x, y, nullptr);
+		return;
 	}
 }
 
@@ -215,12 +248,12 @@ void Board::SaveMap(HWND _hWnd)
 
 	CSprite sprite;
 
-	std::vector<std::vector<CSprite>*>* vecSprite = m_vecLayer->at(0).GetVecSprite();
+	std::vector<std::vector<CSprite*>*>* vecSprite = m_vecLayer->at(0).GetVecSprite();
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = vecSprite->at(i)->at(j);
+			sprite = *vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}
@@ -230,7 +263,7 @@ void Board::SaveMap(HWND _hWnd)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = vecSprite->at(i)->at(j);
+			sprite = *vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}
@@ -240,7 +273,7 @@ void Board::SaveMap(HWND _hWnd)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			sprite = vecSprite->at(i)->at(j);
+			sprite = *vecSprite->at(i)->at(j);
 			fwrite(&sprite, sizeof(CSprite), 1, pFile);
 		}
 	}

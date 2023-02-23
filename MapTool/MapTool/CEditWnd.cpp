@@ -241,14 +241,13 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (m_menuEvent == MenuEvent::Blocked || m_menuEvent == MenuEvent::Spawn_Character || m_menuEvent == MenuEvent::Spawn_Monster)
 		{
 			Board::GetInst()->RemoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
-			InvalidateRgn(hWnd, NULL, false);
 		}
-		/*
+		
 		else if (m_menuEvent == MenuEvent::Default)
 		{
-			Board::GetInst()->Remove
+			Board::GetInst()->RemoveSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
-		*/
+		InvalidateRgn(hWnd, NULL, false);
 		break;
 	case WM_MOUSEMOVE:
 		m_mouse.SetXPos(GET_X_LPARAM(lParam));
@@ -258,7 +257,6 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (m_menuEvent == MenuEvent::Default)
 			{
-				//m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 				Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
 			}
 			else

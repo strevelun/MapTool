@@ -14,8 +14,8 @@ void Layer::Render(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBl
 		{
 			Board::GetInst()->DrawRect(_pRenderTarget, _pBlackBrush, j, i);
 			
-			CSprite* sprite = &m_vecSprite->at(i)->at(j);
-			if (sprite->GetBitmap() == nullptr)
+			CSprite* sprite = m_vecSprite->at(i)->at(j);
+			if (sprite == nullptr)
 				continue;
 			sprite->Render(_pRenderTarget, j, i);
 		}
@@ -24,14 +24,14 @@ void Layer::Render(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBl
 
 void Layer::SetVecSprite(int _gridX, int _gridY)
 {
-	m_vecSprite = new std::vector<std::vector<CSprite>*>(_gridY);
+	m_vecSprite = new std::vector<std::vector<CSprite*>*>(_gridY);
 	for (int i = 0; i < _gridY; i++)
-		(*m_vecSprite)[i] = new std::vector<CSprite>(_gridX);
+		(*m_vecSprite)[i] = new std::vector<CSprite*>(_gridX);
 }
 
 void Layer::AddSprite(int _x, int _y, CSprite* _sprite)
 {
-	m_vecSprite->at(_y)->at(_x) = *_sprite;
+	m_vecSprite->at(_y)->at(_x) = _sprite;
 }
 
 void Layer::DestroyVecSprite()

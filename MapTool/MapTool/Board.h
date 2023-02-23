@@ -34,6 +34,7 @@ public:
 	void RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBlackBrush);
 
 	void PutSprite(int _xpos, int _ypos, CMouse* _mouse);
+	void RemoveSprite(int _xpos, int _ypos);
 	void RemoveEvent(int _xpos, int _ypos, MenuEvent _event);
 	void PutEvent(int _xpos, int _ypos, MenuEvent _event);
 	void SetBoard(int _gridX, int _gridY);

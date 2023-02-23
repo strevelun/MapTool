@@ -91,6 +91,7 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                         m_mapImage["Character"].push_back(image);
                         break;
                     }
+
                 }
 
                 fclose(pFile);
