@@ -22,32 +22,13 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 
 	m_vecLayer->at(0).Render(_pRenderTarget, _pBlackBrush, m_gridX, m_gridY);
 
-	int cameraX = Camera::GetInst()->GetXPos();
-	int cameraY = Camera::GetInst()->GetYPos();
-
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
 			CSprite* sprite = m_vecLayer->at(1).GetSprite(j, i);
 			if (sprite->GetBitmap() != nullptr)
-			{
-				_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-					D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) - (40 * 0.5) + cameraY,
-						j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-						i * BOARD_BOX_SIZE + (BOARD_BOX_SIZE) +cameraY));
-			}
-
-			sprite = m_vecLayer->at(2).GetSprite(j, i);
-			if (sprite->GetBitmap() == nullptr)
-				continue;
-
-			_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE ) + cameraY,
-					j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY));
+				sprite->Render(_pRenderTarget, j, i);
 		}
 	}
 
@@ -63,10 +44,7 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				ID2D1SolidColorBrush* brush = nullptr;
 				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
 				brush->SetOpacity(0.8);
-				_pRenderTarget->DrawRectangle(D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + cameraY,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY), brush, 5);
+				DrawRect(_pRenderTarget, brush, j, i);
 				brush->Release();
 				break;
 			}
@@ -87,18 +65,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				}
 
 				if(sprite != nullptr)
-					_pRenderTarget->DrawBitmap(sprite->GetBitmap(), D2D1::RectF(
-						j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-						i * BOARD_BOX_SIZE - (sprite->GetHeight() - BOARD_BOX_SIZE) + cameraY,
-						j * BOARD_BOX_SIZE + sprite->GetWidth() + PALETTE_WIDTH + cameraX,
-						i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY));
+					sprite->Render(_pRenderTarget, j, i, 0.625f, 0.7f);
 
 				brush->SetOpacity(0.8);
-				_pRenderTarget->DrawRectangle(D2D1::RectF(
-					j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + cameraY,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY), brush, 5);
+				DrawRect(_pRenderTarget, brush, j, i, 5);
 				brush->Release();
 				break;
 			}
@@ -109,62 +79,69 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 
 void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 {
-	int xpos = _xpos - Camera::GetInst()->GetXPos();
-	int ypos = _ypos - Camera::GetInst()->GetYPos();
+	int cameraX = Camera::GetInst()->GetXPos();
+	int cameraY = Camera::GetInst()->GetYPos();
+
+	float cameraScale = Camera::GetInst()->GetScale();
+	int xpos = (_xpos - cameraX) ;
+	int ypos = (_ypos - cameraY) ;
 
 	if (xpos < PALETTE_WIDTH) return;
 	if (ypos < 0) return;
-	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE * cameraScale) + PALETTE_WIDTH ) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE * cameraScale)) return;
 
 	CSprite *sprite = _mouse->GetMousePointer();
 	if (sprite == nullptr) return;
 	
-	int x = (xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = ypos / BOARD_BOX_SIZE;
+
+	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
+	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
 	switch (sprite->GetType())
 	{
 	case Type::Tile:
-		m_vecLayer->at(0).PutSprite(x, y, sprite);
+		m_vecLayer->at(0).AddSprite(x, y, sprite);
 		break;
 	case Type::Block:
-		m_vecLayer->at(1).PutSprite(x, y, sprite);
+		m_vecLayer->at(1).AddSprite(x, y, sprite);
 		break;
-	case Type::Character:
-		m_vecLayer->at(2).PutSprite(x, y, sprite);
-		break;
+	//case Type::Character:
+	//	m_vecLayer->at(2).AddSprite(x, y, sprite);
+	//	break;
 	}
 }
 
 void Board::RemoveEvent(int _xpos, int _ypos, MenuEvent _event)
 {
+	float cameraScale = Camera::GetInst()->GetScale();
 	int xpos = _xpos - Camera::GetInst()->GetXPos();
 	int ypos = _ypos - Camera::GetInst()->GetYPos();
 
 	if (xpos < PALETTE_WIDTH) return;
 	if (ypos < 0) return;
-	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE * cameraScale) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE * cameraScale)) return;
 
-	int x = (xpos - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = ypos / BOARD_BOX_SIZE;
+	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
+	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
 	m_pVecBoardEvent->at(y)->at(x) = MenuEvent::Default;
 }
 
 void Board::PutEvent(int _xpos, int _ypos, MenuEvent _event)
 {
+	float cameraScale = Camera::GetInst()->GetScale();
 	int xpos = _xpos - Camera::GetInst()->GetXPos();
 	int ypos = _ypos - Camera::GetInst()->GetYPos();
 
 	if (xpos < PALETTE_WIDTH) return;
 	if (ypos < 0) return;
-	if (xpos >= (m_gridX * BOARD_BOX_SIZE) + PALETTE_WIDTH) return;
-	if (ypos >= (m_gridY * BOARD_BOX_SIZE)) return;
+	if (xpos >= (m_gridX * BOARD_BOX_SIZE * cameraScale) + PALETTE_WIDTH) return;
+	if (ypos >= (m_gridY * BOARD_BOX_SIZE * cameraScale)) return;
 
-	int x = (xpos  - PALETTE_WIDTH) / BOARD_BOX_SIZE;
-	int y = ypos / BOARD_BOX_SIZE;
+	int x = (xpos  - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
+	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
 	if (_event == MenuEvent::Spawn_Character)
 		for (int i = 0; i < m_gridY; i++)
@@ -339,7 +316,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
-			layer.PutSprite(j, i, &sprite);
+			layer.AddSprite(j, i, &sprite);
 		}
 	}
 
@@ -352,7 +329,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
-			layer.PutSprite(j, i, &sprite);
+			layer.AddSprite(j, i, &sprite);
 		}
 	}
 
@@ -364,7 +341,7 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 			fread(&sprite, sizeof(CSprite), 1, pFile);			
 			if (sprite.GetWidth() > 0)
 				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Character", sprite.GetIdx())->GetBitmap());
-			layer.PutSprite(j, i, &sprite);
+			layer.AddSprite(j, i, &sprite);
 		}
 	}
 
@@ -380,4 +357,18 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 	}
 
 	fclose(pFile);
+}
+
+void Board::DrawRect(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _brush, int x, int y, int _strokeWidth)
+{
+	int cameraX = Camera::GetInst()->GetXPos();
+	int cameraY = Camera::GetInst()->GetYPos();
+	float cameraScale = Camera::GetInst()->GetScale();
+
+	int left = (x * BOARD_BOX_SIZE * cameraScale + PALETTE_WIDTH + cameraX) ;
+	int top = (y * BOARD_BOX_SIZE * cameraScale + cameraY);
+	int right = (x * BOARD_BOX_SIZE * cameraScale + BOARD_BOX_SIZE * cameraScale + PALETTE_WIDTH + cameraX);
+	int bottom = (y * BOARD_BOX_SIZE * cameraScale + BOARD_BOX_SIZE * cameraScale + cameraY);
+
+	_pRenderTarget->DrawRectangle(D2D1::RectF(left, top, right, bottom), _brush, _strokeWidth);
 }

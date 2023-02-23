@@ -1,28 +1,23 @@
 #include "Layer.h"
 #include "Camera.h"
+#include "Board.h"
 
 void Layer::Render(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _pBlackBrush, int _gridX, int _gridY)
 {
 	int cameraX = Camera::GetInst()->GetXPos();
 	int cameraY = Camera::GetInst()->GetYPos();
+	
 
 	for (int i = 0; i < _gridY; i++)
 	{
 		for (int j = 0; j < _gridX; j++)
 		{
-			_pRenderTarget->DrawRectangle(
-				D2D1::RectF(PALETTE_WIDTH + j * BOARD_BOX_SIZE + cameraX,
-					i * BOARD_BOX_SIZE + cameraY,
-					PALETTE_WIDTH + j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraX,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY), _pBlackBrush);
+			Board::GetInst()->DrawRect(_pRenderTarget, _pBlackBrush, j, i);
+			
 			CSprite* sprite = &m_vecSprite->at(i)->at(j);
 			if (sprite->GetBitmap() == nullptr)
 				continue;
-			_pRenderTarget->DrawBitmap(sprite->GetBitmap(),
-				D2D1::RectF(j * BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + cameraY,
-					j * BOARD_BOX_SIZE + BOARD_BOX_SIZE + PALETTE_WIDTH + cameraX,
-					i * BOARD_BOX_SIZE + BOARD_BOX_SIZE + cameraY));
+			sprite->Render(_pRenderTarget, j, i);
 		}
 	}
 }
@@ -34,7 +29,7 @@ void Layer::SetVecSprite(int _gridX, int _gridY)
 		(*m_vecSprite)[i] = new std::vector<CSprite>(_gridX);
 }
 
-void Layer::PutSprite(int _x, int _y, CSprite* _sprite)
+void Layer::AddSprite(int _x, int _y, CSprite* _sprite)
 {
 	m_vecSprite->at(_y)->at(_x) = *_sprite;
 }

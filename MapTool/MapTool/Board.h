@@ -11,9 +11,6 @@ class CMouse;
 class Board
 {
 	static Board* m_inst;
-	//std::vector<std::vector<CSprite>*>* m_pVecBoardTile;
-	//std::vector<std::vector<CSprite>*>* m_pVecBoardObject;
-	//std::vector<std::vector<CSprite>*>* m_pVecBoardCharacter;
 	std::vector<Layer>* m_vecLayer;
 	std::vector<std::vector<MenuEvent>*>* m_pVecBoardEvent;
 
@@ -44,4 +41,6 @@ public:
 
 	void SaveMap(HWND _hWnd);
 	void LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget);
+
+	void DrawRect(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush* _brush, int x, int y, int _strokeWidth = 1);
 };

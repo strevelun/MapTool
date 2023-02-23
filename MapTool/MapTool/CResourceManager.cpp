@@ -53,32 +53,7 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                 if (pFile == nullptr || errNum != 0)
                     return;
 
-                std::stack<char> s;
-                int i;
-
-                for (i = fileName.size(); i >= 0; i--)
-                {
-                    if (fileName[i] == '.')
-                        break;
-                    s.push(fileName[i]);
-                }
-
-                char* str = new char[fileName.size() - i];
-                i = 0;
-                while (!s.empty())
-                {
-                    str[i++] = s.top();
-                    s.pop();
-                }
-
-                std::string name(str);
-
-                delete[] str;
-
-                //Type type;
-
                 fread(&clipSize, sizeof(int), 1, pFile);
-                //fread(&type, sizeof(Type), 1, pFile);
 
                 for (int i = 0; i < clipSize; i++)
                 {
@@ -116,7 +91,6 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
                         m_mapImage["Character"].push_back(image);
                         break;
                     }
-
                 }
 
                 fclose(pFile);

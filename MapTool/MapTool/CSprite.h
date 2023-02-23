@@ -31,5 +31,7 @@ public:
 
 	DWORD* GetPixel() const { return m_pixel; }
 	void CreateAndSetBitmap(ID2D1RenderTarget* _pRenderTarget, DWORD* _pixel);
+
+	void Render(ID2D1RenderTarget* _pRenderTarget, int _x, int _y, float _widthScale = 1.0f, float _heightScale = 1.0f);
 };
 

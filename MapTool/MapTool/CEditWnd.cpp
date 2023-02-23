@@ -5,7 +5,6 @@
 #include "resource.h"
 #include "CApp.h"
 #include "Board.h"
-#include "FileManager.h"
 #include "Camera.h"
 
 #include <commctrl.h>
@@ -63,28 +62,6 @@ void CEditWnd::RenderPalette()
 			ypos += h;
 		}
 	}
-
-	/*
-	xpos = 0;
-	ypos += h;
-	wstr = L"Ä³¸¯ÅÍ";
-	m_pRenderTarget->DrawTextW(wstr.c_str(), wstr.length(), m_pDWTextFormat, D2D1::RectF(50, ypos, 250, ypos + 40), m_pBlackBrush);
-	ypos += 40;
-
-	for (int i = 0; i < CResourceManager::GetInst()->GetVecSize("Character"); i++)
-	{
-		sprite = CResourceManager::GetInst()->GetImage("Character", i);
-		D2D1_RECT_F rect = D2D1::RectF(xpos, ypos, xpos + w, ypos + h);
-		sprite->SetRect(rect);
-		m_pRenderTarget->DrawBitmap(sprite->GetBitmap(), rect);
-		xpos += w;
-		if (xpos >= PALETTE_WIDTH - w)
-		{
-			xpos = 0;
-			ypos += h;
-		}
-	}
-	*/
 }
 
 
@@ -209,6 +186,17 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
+	case WM_MOUSEWHEEL:
+	{
+		int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if(delta > 0)
+			Camera::GetInst()->SetScale(0.1f);
+		else if(delta < 0)
+			Camera::GetInst()->SetScale(-0.1f);
+			
+		InvalidateRect(hWnd, NULL, false);
+		break;
+	}
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_LEFT:
