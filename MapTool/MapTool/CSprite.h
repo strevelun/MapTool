@@ -23,7 +23,7 @@ public:
 	void SetIdx(int _idx) { m_idx = _idx; }
 
 	ID2D1Bitmap* GetBitmap() const { return m_bitmap; }
-	int GetWidth() const { return m_size.width; }
+	int GetWidth() const { return m_rect.right - m_rect.left; }
 	int GetHeight() const { return m_size.height; }
 	D2D1_RECT_F GetRect() const { return m_rect; }
 	Type GetType() const { return m_type; }
