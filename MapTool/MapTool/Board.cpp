@@ -3,6 +3,7 @@
 #include "CMouse.h"
 #include "CResourceManager.h"
 #include "Camera.h"
+#include <istream>
 
 #include <stack>
 
@@ -246,37 +247,6 @@ void Board::SaveMap(HWND _hWnd)
 	fwrite(&m_gridX, sizeof(int), 1, pFile);
 	fwrite(&m_gridY, sizeof(int), 1, pFile);
 
-	CSprite sprite;
-
-	std::vector<std::vector<CSprite*>*>* vecSprite = m_vecLayer->at(0).GetVecSprite();
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			sprite = *vecSprite->at(i)->at(j);
-			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-		}
-	}
-
-	vecSprite = m_vecLayer->at(1).GetVecSprite();
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			sprite = *vecSprite->at(i)->at(j);
-			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-		}
-	}
-
-	vecSprite = m_vecLayer->at(2).GetVecSprite();
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			sprite = *vecSprite->at(i)->at(j);
-			fwrite(&sprite, sizeof(CSprite), 1, pFile);
-		}
-	}
 
 	MenuEvent event;
 
@@ -288,6 +258,35 @@ void Board::SaveMap(HWND _hWnd)
 			fwrite(&event, sizeof(MenuEvent), 1, pFile);
 		}
 	}
+
+	CSprite* sprite;
+
+	std::vector<std::vector<CSprite*>*>* vecSprite = m_vecLayer->at(0).GetVecSprite();
+	for (int i = 0; i < m_gridY; i++)
+	{
+		for (int j = 0; j < m_gridX; j++)
+		{
+			sprite = vecSprite->at(i)->at(j);
+			if (sprite == nullptr) continue;
+			fwrite(&j, sizeof(int), 1, pFile);
+			fwrite(&i, sizeof(int), 1, pFile);
+			fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+		}
+	}
+
+	vecSprite = m_vecLayer->at(1).GetVecSprite();
+	for (int i = 0; i < m_gridY; i++)
+	{
+		for (int j = 0; j < m_gridX; j++)
+		{
+			sprite = vecSprite->at(i)->at(j);
+			if (sprite == nullptr) continue;
+			fwrite(&j, sizeof(int), 1, pFile);
+			fwrite(&i, sizeof(int), 1, pFile);
+			fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+		}
+	}
+
 
 	fclose(pFile);
 }
@@ -338,45 +337,6 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 	fread(&m_gridY, sizeof(int), 1, pFile);
 
 	SetBoard(m_gridX, m_gridY);
-	
-	CSprite sprite;
-
-	Layer layer = m_vecLayer->at(0);
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			fread(&sprite, sizeof(CSprite), 1, pFile);
-			if (sprite.GetWidth() > 0)
-				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
-			layer.AddSprite(j, i, &sprite);
-		}
-	}
-
-	layer = m_vecLayer->at(1);
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			fread(&sprite, sizeof(CSprite), 1, pFile);
-			
-			if (sprite.GetWidth() > 0)
-				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
-			layer.AddSprite(j, i, &sprite);
-		}
-	}
-
-	layer = m_vecLayer->at(2);
-	for (int i = 0; i < m_gridY; i++)
-	{
-		for (int j = 0; j < m_gridX; j++)
-		{
-			fread(&sprite, sizeof(CSprite), 1, pFile);			
-			if (sprite.GetWidth() > 0)
-				sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Character", sprite.GetIdx())->GetBitmap());
-			layer.AddSprite(j, i, &sprite);
-		}
-	}
 
 	MenuEvent event;
 
@@ -386,6 +346,27 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 		{
 			fread(&event, sizeof(MenuEvent), 1, pFile);
 			m_pVecBoardEvent->at(i)->at(j) = event;
+		}
+	}
+
+	CSprite sprite; 
+	int x, y;
+
+	while (fread(&x, sizeof(int), 1, pFile) == 1 &&
+		fread(&y, sizeof(int), 1, pFile) == 1 &&
+		fread(&sprite, sizeof(CSprite), 1, pFile) == 1)
+	{
+		switch (sprite.GetType())
+		{
+		case Type::Tile:
+			sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
+			m_vecLayer->at(0).AddSprite(x, y, new CSprite(sprite));
+			break;
+		case Type::Block:
+			sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
+			m_vecLayer->at(1).AddSprite(x, y, new CSprite(sprite));
+			break;
+
 		}
 	}
 

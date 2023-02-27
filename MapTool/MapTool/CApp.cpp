@@ -31,6 +31,8 @@ int CApp::Run()
 		}
 	}
 
+	CResourceManager::GetInst()->DeleteInst();
+	Board::GetInst()->DestroyBoard();
 	CCore::GetInst()->CleanupDevice();
 	CCore::DeleteInst();
 

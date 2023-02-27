@@ -29,7 +29,7 @@ void CSprite::Render(ID2D1RenderTarget* _pRenderTarget, int _x, int _y, float _w
 	float cameraScale = Camera::GetInst()->GetScale();
 
 	float left = (_x * BOARD_BOX_SIZE * cameraScale + PALETTE_WIDTH + cameraX);
-	float top = (_y * BOARD_BOX_SIZE * cameraScale - (m_size.height * _heightScale * cameraScale - BOARD_BOX_SIZE * cameraScale) + cameraY);
+	float top = (_y * BOARD_BOX_SIZE * cameraScale - (GetHeight() * _heightScale * cameraScale - BOARD_BOX_SIZE * cameraScale) + cameraY);
 	float right = (_x * BOARD_BOX_SIZE * cameraScale + (GetWidth() * _widthScale * cameraScale) + PALETTE_WIDTH + cameraX);
 	float bottom = (_y * BOARD_BOX_SIZE * cameraScale + (BOARD_BOX_SIZE * cameraScale) + cameraY);
 

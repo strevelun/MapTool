@@ -200,16 +200,16 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_LEFT:
-			Camera::GetInst()->UpdateXPos(15);
+			Camera::GetInst()->UpdateXPos(30);
 			break;
 		case VK_RIGHT:
-			Camera::GetInst()->UpdateXPos(-15);
+			Camera::GetInst()->UpdateXPos(-30);
 			break;
 		case VK_UP:
-			Camera::GetInst()->UpdateYPos(15);
+			Camera::GetInst()->UpdateYPos(30);
 			break;
 		case VK_DOWN:
-			Camera::GetInst()->UpdateYPos(-15);
+			Camera::GetInst()->UpdateYPos(-30);
 			break;
 		}
 		InvalidateRect(hWnd, NULL, false);

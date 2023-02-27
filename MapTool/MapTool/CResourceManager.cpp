@@ -16,6 +16,14 @@ CResourceManager::CResourceManager()
 
 CResourceManager::~CResourceManager()
 {
+    std::map<std::string, std::vector<CSprite*>>::iterator iter = m_mapImage.begin();
+    std::map<std::string, std::vector<CSprite*>>::iterator iterEnd = m_mapImage.end();
+
+    int i = 0;
+    for (; iter != iterEnd; iter++)
+    {
+        delete iter->second.at(i++);
+    }
 }
 
 void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
