@@ -270,7 +270,11 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+			//fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+			Type type = sprite->GetType();
+			int idx = sprite->GetIdx();
+			fwrite(&type, sizeof(Type), 1, pFile);
+			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
 
@@ -283,7 +287,11 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+			//fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
+			Type type = sprite->GetType();
+			int idx = sprite->GetIdx();
+			fwrite(&type, sizeof(Type), 1, pFile);
+			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
 
@@ -349,22 +357,29 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 		}
 	}
 
-	CSprite sprite; 
 	int x, y;
+	int idx;
+	Type type;
 
 	while (fread(&x, sizeof(int), 1, pFile) == 1 &&
 		fread(&y, sizeof(int), 1, pFile) == 1 &&
-		fread(&sprite, sizeof(CSprite), 1, pFile) == 1)
+		//fread(&sprite, sizeof(CSprite), 1, pFile) == 1)
+		fread(&type, sizeof(Type), 1, pFile) == 1 && 
+		fread(&idx, sizeof(int), 1, pFile) == 1)
 	{
-		switch (sprite.GetType())
+		CSprite* sprite = nullptr;
+
+		switch (type)
 		{
 		case Type::Tile:
-			sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", sprite.GetIdx())->GetBitmap());
-			m_vecLayer->at(0).AddSprite(x, y, new CSprite(sprite));
+			//sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", idx)->GetBitmap());
+			sprite = CResourceManager::GetInst()->GetImage("Tile", idx);
+			m_vecLayer->at(0).AddSprite(x, y, sprite);
 			break;
 		case Type::Block:
-			sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", sprite.GetIdx())->GetBitmap());
-			m_vecLayer->at(1).AddSprite(x, y, new CSprite(sprite));
+			//sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", idx)->GetBitmap());
+			sprite = CResourceManager::GetInst()->GetImage("Block", idx);
+			m_vecLayer->at(1).AddSprite(x, y, sprite);
 			break;
 
 		}

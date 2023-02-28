@@ -19,6 +19,12 @@ enum class Type
 	None
 };
 
+/*
+enum class tObject
+{
+};
+*/
+
 enum class CharacterType
 {
 	Player,

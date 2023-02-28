@@ -114,3 +114,25 @@ void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
     }
     
 }
+
+
+void CResourceManager::LoadFile(ID2D1HwndRenderTarget* _pRenderTarget)
+{
+
+    CSprite* arr = new CSprite[5];
+
+    //for (int i = 0; i < 5; i++)
+    //{
+     //   CSprite* image = new CSprite;
+
+    fread(image, sizeof(CSprite), 5, pFile);
+
+
+
+        fread(&width, sizeof(int), 1, pFile);
+        fread(&height, sizeof(int), 1, pFile);
+        DWORD* pixel = (DWORD*)malloc(sizeof(DWORD) * width * height);
+
+        fread(&pixel[0], sizeof(DWORD) * width, height, pFile);
+    }
+}

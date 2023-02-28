@@ -7,6 +7,7 @@ CSprite::CSprite()
 
 CSprite::~CSprite()
 {
+	if (m_pixel) delete[] m_pixel; // TODO 
 }
 
 void CSprite::CreateAndSetBitmap(ID2D1RenderTarget* _pRenderTarget, DWORD* _pixel)

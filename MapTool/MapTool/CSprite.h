@@ -3,6 +3,19 @@
 #include <d2d1.h>
 #include "Settings.h"
 
+/*
+class CLSprite
+{
+	ID2D1Bitmap*	m_bitmap = nullptr;
+	u_int			m_idx;
+
+	D2D1_RECT_F		m_rect = {};
+	D2D1_SIZE_F		m_size = {};
+	D2D1_POINT_2F	m_pivot = { 0.5f, 0.5f };
+};
+*/
+
+
 class CSprite
 {
 	float m_pivotX = 0.5f, m_pivotY = 0.5f;
