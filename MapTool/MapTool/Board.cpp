@@ -30,6 +30,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 			CSprite* sprite = m_vecLayer->at(1).GetSprite(j, i);
 			if (sprite != nullptr)
 				sprite->Render(_pRenderTarget, j, i);
+
+			sprite = m_vecLayer->at(2).GetSprite(j, i);
+			if (sprite != nullptr)
+				sprite->Render(_pRenderTarget, j, i);
 		}
 	}
 
@@ -37,10 +41,10 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			MenuEvent menuEvent = m_pVecBoardEvent->at(i)->at(j);
+			tMenuEvent menuEvent = m_pVecBoardEvent->at(i)->at(j);
 			switch (menuEvent)
 			{
-			case MenuEvent::Blocked:
+			case tMenuEvent::Blocked:
 			{
 				ID2D1SolidColorBrush* brush = nullptr;
 				_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
@@ -49,12 +53,12 @@ void Board::RenderBoard(ID2D1RenderTarget* _pRenderTarget, ID2D1SolidColorBrush*
 				brush->Release();
 				break;
 			}
-			case MenuEvent::Spawn_Character:
-			case MenuEvent::Spawn_Monster:
+			case tMenuEvent::Spawn_Character:
+			case tMenuEvent::Spawn_Monster:
 			{
 				ID2D1SolidColorBrush* brush = nullptr;
 				CSprite* sprite = nullptr;
-				if (menuEvent == MenuEvent::Spawn_Character)
+				if (menuEvent == tMenuEvent::Spawn_Character)
 				{
 					_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Aqua), &brush);
 					sprite = CResourceManager::GetInst()->GetImage("Character", 0);
@@ -99,12 +103,19 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
 	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
+	// 깃발인 경우 예외
+	if (sprite->GetSize().width < 30)
+	{
+		m_vecLayer->at(2).AddSprite(x, y, sprite);
+		return;
+	}
+
 	switch (sprite->GetType())
 	{
-	case Type::Tile:
+	case tType::Tile:
 		m_vecLayer->at(0).AddSprite(x, y, sprite);
 		break;
-	case Type::Block:
+	case tType::Block:
 		m_vecLayer->at(1).AddSprite(x, y, sprite);
 		break;
 	//case Type::Character:
@@ -130,7 +141,17 @@ void Board::RemoveSprite(int _xpos, int _ypos)
 	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
 	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
-	CSprite* sprite = m_vecLayer->at(1).GetSprite(x, y);
+
+	// 깃발부터
+	CSprite* sprite = m_vecLayer->at(2).GetSprite(x, y);
+
+	if (sprite != nullptr)
+	{
+		m_vecLayer->at(2).AddSprite(x, y, nullptr);
+		return;
+	}
+
+	sprite = m_vecLayer->at(1).GetSprite(x, y);
 
 	if (sprite != nullptr)
 	{
@@ -146,7 +167,7 @@ void Board::RemoveSprite(int _xpos, int _ypos)
 	}
 }
 
-void Board::RemoveEvent(int _xpos, int _ypos, MenuEvent _event)
+void Board::RemoveEvent(int _xpos, int _ypos, tMenuEvent _event)
 {
 	float cameraScale = Camera::GetInst()->GetScale();
 	int xpos = _xpos - Camera::GetInst()->GetXPos();
@@ -160,10 +181,10 @@ void Board::RemoveEvent(int _xpos, int _ypos, MenuEvent _event)
 	int x = (xpos - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
 	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
-	m_pVecBoardEvent->at(y)->at(x) = MenuEvent::Default;
+	m_pVecBoardEvent->at(y)->at(x) = tMenuEvent::Default;
 }
 
-void Board::PutEvent(int _xpos, int _ypos, MenuEvent _event)
+void Board::PutEvent(int _xpos, int _ypos, tMenuEvent _event)
 {
 	float cameraScale = Camera::GetInst()->GetScale();
 	int xpos = _xpos - Camera::GetInst()->GetXPos();
@@ -177,11 +198,11 @@ void Board::PutEvent(int _xpos, int _ypos, MenuEvent _event)
 	int x = (xpos  - PALETTE_WIDTH) / (BOARD_BOX_SIZE * cameraScale);
 	int y = ypos / (BOARD_BOX_SIZE * cameraScale);
 
-	if (_event == MenuEvent::Spawn_Character)
+	if (_event == tMenuEvent::Spawn_Character)
 		for (int i = 0; i < m_gridY; i++)
 			for (int j = 0; j < m_gridX; j++)
-				if (m_pVecBoardEvent->at(i)->at(j) == MenuEvent::Spawn_Character)
-					m_pVecBoardEvent->at(i)->at(j) = MenuEvent::Default;
+				if (m_pVecBoardEvent->at(i)->at(j) == tMenuEvent::Spawn_Character)
+					m_pVecBoardEvent->at(i)->at(j) = tMenuEvent::Default;
 	m_pVecBoardEvent->at(y)->at(x) = _event;
 }
 
@@ -198,9 +219,9 @@ void Board::SetBoard(int _gridX, int _gridY)
 	{
 		m_vecLayer->at(i).SetVecSprite(_gridX, _gridY);
 	}
-	m_pVecBoardEvent = new std::vector<std::vector<MenuEvent>*>(_gridY);	
+	m_pVecBoardEvent = new std::vector<std::vector<tMenuEvent>*>(_gridY);	
 	for (int i = 0; i < _gridY; i++)
-		(*m_pVecBoardEvent)[i] = new std::vector<MenuEvent>(_gridX);
+		(*m_pVecBoardEvent)[i] = new std::vector<tMenuEvent>(_gridX);
 }
 
 void Board::DestroyBoard()
@@ -247,15 +268,14 @@ void Board::SaveMap(HWND _hWnd)
 	fwrite(&m_gridX, sizeof(int), 1, pFile);
 	fwrite(&m_gridY, sizeof(int), 1, pFile);
 
-
-	MenuEvent event;
+	tMenuEvent event;
 
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
 			event = m_pVecBoardEvent->at(i)->at(j);
-			fwrite(&event, sizeof(MenuEvent), 1, pFile);
+			fwrite(&event, sizeof(tMenuEvent), 1, pFile);
 		}
 	}
 
@@ -270,10 +290,9 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			//fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
-			Type type = sprite->GetType();
+			tType type = sprite->GetType();
 			int idx = sprite->GetIdx();
-			fwrite(&type, sizeof(Type), 1, pFile);
+			fwrite(&type, sizeof(tType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
@@ -287,14 +306,28 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			//fwrite(&(*sprite), sizeof(CSprite), 1, pFile);
-			Type type = sprite->GetType();
+			tType type = sprite->GetType();
 			int idx = sprite->GetIdx();
-			fwrite(&type, sizeof(Type), 1, pFile);
+			fwrite(&type, sizeof(tType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
 
+	vecSprite = m_vecLayer->at(2).GetVecSprite();
+	for (int i = 0; i < m_gridY; i++)
+	{
+		for (int j = 0; j < m_gridX; j++)
+		{
+			sprite = vecSprite->at(i)->at(j);
+			if (sprite == nullptr) continue;
+			fwrite(&j, sizeof(int), 1, pFile);
+			fwrite(&i, sizeof(int), 1, pFile);
+			tType type = sprite->GetType();
+			int idx = sprite->GetIdx();
+			fwrite(&type, sizeof(tType), 1, pFile);
+			fwrite(&idx, sizeof(int), 1, pFile);
+		}
+	}
 
 	fclose(pFile);
 }
@@ -346,42 +379,41 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 
 	SetBoard(m_gridX, m_gridY);
 
-	MenuEvent event;
+	tMenuEvent event;
 
 	for (int i = 0; i < m_gridY; i++)
 	{
 		for (int j = 0; j < m_gridX; j++)
 		{
-			fread(&event, sizeof(MenuEvent), 1, pFile);
+			fread(&event, sizeof(tMenuEvent), 1, pFile);
 			m_pVecBoardEvent->at(i)->at(j) = event;
 		}
 	}
 
 	int x, y;
 	int idx;
-	Type type;
+	tType type;
 
 	while (fread(&x, sizeof(int), 1, pFile) == 1 &&
 		fread(&y, sizeof(int), 1, pFile) == 1 &&
-		//fread(&sprite, sizeof(CSprite), 1, pFile) == 1)
-		fread(&type, sizeof(Type), 1, pFile) == 1 && 
+		fread(&type, sizeof(tType), 1, pFile) == 1 && 
 		fread(&idx, sizeof(int), 1, pFile) == 1)
 	{
 		CSprite* sprite = nullptr;
 
 		switch (type)
 		{
-		case Type::Tile:
-			//sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Tile", idx)->GetBitmap());
+		case tType::Tile:
 			sprite = CResourceManager::GetInst()->GetImage("Tile", idx);
 			m_vecLayer->at(0).AddSprite(x, y, sprite);
 			break;
-		case Type::Block:
-			//sprite.SetBitmap(CResourceManager::GetInst()->GetImage("Block", idx)->GetBitmap());
+		case tType::Block:
 			sprite = CResourceManager::GetInst()->GetImage("Block", idx);
-			m_vecLayer->at(1).AddSprite(x, y, sprite);
+			if (sprite->GetSize().width < 30)
+				m_vecLayer->at(2).AddSprite(x, y, sprite);
+			else
+				m_vecLayer->at(1).AddSprite(x, y, sprite);
 			break;
-
 		}
 	}
 

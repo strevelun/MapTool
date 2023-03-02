@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-	void LoadFile(ID2D1HwndRenderTarget* _pRenderTarget);
+	void LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wstring folderName);
 
 	CSprite* GetImage(std::string key, int idx) 
 	{

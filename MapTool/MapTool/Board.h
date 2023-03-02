@@ -11,8 +11,8 @@ class CMouse;
 class Board
 {
 	static Board* m_inst;
-	std::vector<Layer>* m_vecLayer;
-	std::vector<std::vector<MenuEvent>*>* m_pVecBoardEvent;
+	std::vector<Layer>* m_vecLayer; // 2번 레이어는 깃발 전용 레이어
+	std::vector<std::vector<tMenuEvent>*>* m_pVecBoardEvent;
 
 	int m_gridX = 0, m_gridY = 0;
 
@@ -35,8 +35,8 @@ public:
 
 	void PutSprite(int _xpos, int _ypos, CMouse* _mouse);
 	void RemoveSprite(int _xpos, int _ypos);
-	void RemoveEvent(int _xpos, int _ypos, MenuEvent _event);
-	void PutEvent(int _xpos, int _ypos, MenuEvent _event);
+	void RemoveEvent(int _xpos, int _ypos, tMenuEvent _event);
+	void PutEvent(int _xpos, int _ypos, tMenuEvent _event);
 	void SetBoard(int _gridX, int _gridY);
 	void DestroyBoard();
 

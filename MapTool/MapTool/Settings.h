@@ -3,7 +3,7 @@
 #define PALETTE_WIDTH		300
 #define BOARD_BOX_SIZE		40
 
-enum class MenuEvent
+enum class tMenuEvent
 {
 	Default,
 	Blocked,
@@ -11,22 +11,10 @@ enum class MenuEvent
 	Spawn_Monster
 };
 
-enum class Type
+enum class tType
 {
 	Tile,
 	Block,
 	Character,
 	None
-};
-
-/*
-enum class tObject
-{
-};
-*/
-
-enum class CharacterType
-{
-	Player,
-	Monster
 };

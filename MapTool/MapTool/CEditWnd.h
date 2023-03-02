@@ -17,7 +17,7 @@ class CEditWnd
 private:
 	//std::vector<CSprite*> m_vecImage;
 	CMouse m_mouse;
-	MenuEvent m_menuEvent;
+	tMenuEvent m_menuEvent;
 	ID2D1SolidColorBrush* m_pBlackBrush = nullptr;
 	ID2D1SolidColorBrush* m_pRedBrush = nullptr;
 	ID2D1SolidColorBrush* m_pWhiteBrush = nullptr;

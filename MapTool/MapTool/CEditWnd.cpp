@@ -106,7 +106,7 @@ bool CEditWnd::Create(int _w, int _h, int nCmdShow)
 		fontSize, L"en-us", &m_pDWTextFormat);
 	if (FAILED(hr)) return hr;
 
-	CResourceManager::GetInst()->LoadFile(m_pRenderTarget);
+	CResourceManager::GetInst()->LoadFiles(m_pRenderTarget, L".\\resource\\");
 
 	InvalidateRgn(m_hWnd, NULL, true);
 
@@ -143,19 +143,19 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case ID_BLOCKED:
-			m_menuEvent = MenuEvent::Blocked;
+			m_menuEvent = tMenuEvent::Blocked;
 			m_mouse.ResetMousePointer();
 			break;
 		case ID_SPAWN_CHARACTER:
-			m_menuEvent = MenuEvent::Spawn_Character;
+			m_menuEvent = tMenuEvent::Spawn_Character;
 			m_mouse.ResetMousePointer();
 			break;
 		case ID_SPAWN_MONSTER:
-			m_menuEvent = MenuEvent::Spawn_Monster;
+			m_menuEvent = tMenuEvent::Spawn_Monster;
 			m_mouse.ResetMousePointer();
 			break;
 		case ID_DEFAULT:
-			m_menuEvent = MenuEvent::Default;
+			m_menuEvent = tMenuEvent::Default;
 			m_mouse.ResetMousePointer();
 			break;
 		}
@@ -222,7 +222,7 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 	{
 		
-		if (m_menuEvent == MenuEvent::Default)
+		if (m_menuEvent == tMenuEvent::Default)
 		{
 			m_mouse.SetMousePointer(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
@@ -238,12 +238,12 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	case WM_RBUTTONUP:
-		if (m_menuEvent == MenuEvent::Blocked || m_menuEvent == MenuEvent::Spawn_Character || m_menuEvent == MenuEvent::Spawn_Monster)
+		if (m_menuEvent == tMenuEvent::Blocked || m_menuEvent == tMenuEvent::Spawn_Character || m_menuEvent == tMenuEvent::Spawn_Monster)
 		{
 			Board::GetInst()->RemoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), m_menuEvent);
 		}
 		
-		else if (m_menuEvent == MenuEvent::Default)
+		else if (m_menuEvent == tMenuEvent::Default)
 		{
 			Board::GetInst()->RemoveSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
@@ -255,7 +255,7 @@ LRESULT CEditWnd::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		if (m_mouse.IsPressed())
 		{
-			if (m_menuEvent == MenuEvent::Default)
+			if (m_menuEvent == tMenuEvent::Default)
 			{
 				Board::GetInst()->PutSprite(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &m_mouse);
 			}
