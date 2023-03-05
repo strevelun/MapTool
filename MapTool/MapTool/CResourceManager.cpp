@@ -1,5 +1,6 @@
 #include "CResourceManager.h"
 #include "CSprite.h"
+#include "CBitmap.h"
 
 #include <vector>
 #include <string>
@@ -17,10 +18,7 @@ CResourceManager::~CResourceManager()
 {
     for (auto& pair : m_mapImage)
     {
-        for (auto* sprite : pair.second)
-        {
-            delete sprite;
-        }
+        //delete[] pair.second.at(0);
     }
 }
 
@@ -31,6 +29,8 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
     int blockIdx = 0;
     int characterIdx = 0;
 
+    int bitmapIdx = 0;
+
     std::wstring searchPath = folderName + L"*.*";
 
     int size = WideCharToMultiByte(CP_UTF8, 0, searchPath.c_str(), -1, NULL, 0, NULL, NULL);
@@ -39,6 +39,12 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
     std::string result(str);
     delete[] str;
     std::string fileName = result;
+
+    D2D1_BITMAP_PROPERTIES bpp;
+    bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+    bpp.dpiX = (FLOAT)0;
+    bpp.dpiY = (FLOAT)0;
 
     int clipSize;
 
@@ -58,49 +64,49 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
                 if (pFile == nullptr || errNum != 0)
                     return;
 
-                D2D1_BITMAP_PROPERTIES bpp;
-                bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-                bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-                bpp.dpiX = (FLOAT)0;
-                bpp.dpiY = (FLOAT)0;
-
                 fread(&clipSize, sizeof(int), 1, pFile);
+                D2D1_SIZE_F bitmapSize;
+                fread(&bitmapSize, sizeof(D2D1_SIZE_F), 1, pFile);
+                
+                CBitmap* bitmap = new CBitmap();
+                
+                bitmap->SetSize(bitmapSize);
+                DWORD* pixel = new DWORD[sizeof(DWORD) * bitmapSize.width * bitmapSize.height];
+                fread(&pixel[0], sizeof(DWORD) * bitmapSize.width, bitmapSize.height, pFile);
+                ID2D1Bitmap* d2dBitmap;
+                _pRenderTarget->CreateBitmap(D2D1::SizeU(bitmapSize.width, bitmapSize.height), pixel, bitmapSize.width * 4, &bpp, &d2dBitmap);
 
-                CSprite* arr = new CSprite[clipSize];
-                fread(arr, sizeof(CSprite), clipSize, pFile);
+                delete[] pixel;
+
+                bitmap->SetBitmap(d2dBitmap);
+
+                CSpriteData* arr = new CSpriteData[clipSize];
+
+                fread(arr, sizeof(CSpriteData), clipSize, pFile);
 
                 for (int i = 0; i < clipSize; i++)
                 {
                     D2D1_SIZE_F size = arr[i].GetSize();
-                    DWORD* pixel = new DWORD[sizeof(DWORD) * size.width * size.height]; 
-                    fread(&pixel[0], sizeof(DWORD) * size.width , size.height, pFile);
-                    
-                    ID2D1Bitmap* bitmap;
-                    //arr[i].SetPixel(pixel);
-                    _pRenderTarget->CreateBitmap(D2D1::SizeU(size.width, size.height), pixel, size.width * 4, &bpp, &bitmap);
+                    CSprite* sprite = new CSprite(&arr[i]);
 
-                    delete[] pixel;
-
-                     arr[i].SetBitmap(bitmap);
-                     arr[i].SetSize(D2D1::SizeF(size.width, size.height));
-
-                    switch(arr[i].GetType())
+                    switch(sprite->GetType())
                     {
                     case tType::Tile:
-                        arr[i].SetIdx(tileIdx++);
-                        m_mapImage["Tile"].push_back(&arr[i]);
+                        m_mapImage["Tile"].push_back(sprite);
                         break;
                     case tType::Block:
-                        arr[i].SetIdx(blockIdx++);
-                        m_mapImage["Block"].push_back(&arr[i]);
+                        m_mapImage["Block"].push_back(sprite);
                         break;
                     case tType::Character:
-                        arr[i].SetIdx(characterIdx++);
-                        m_mapImage["Character"].push_back(&arr[i]);
+                        m_mapImage["Character"].push_back(sprite);
                         break;
                     }
+                    sprite->SetIdx(bitmapIdx);
                 }
-
+                
+                CResourceManager::GetInst()->SetIdxBitmap(bitmap);
+                delete[] arr;
+                bitmapIdx++;
                 fclose(pFile);
             }
         } while (::FindNextFile(hFind, &fd));

@@ -6,6 +6,7 @@
 #include "CApp.h"
 #include "Board.h"
 #include "Camera.h"
+#include "CBitmap.h"
 
 #include <commctrl.h>
 #include <windowsx.h>
@@ -34,8 +35,15 @@ void CEditWnd::RenderPalette()
 	{
 		sprite = CResourceManager::GetInst()->GetImage("Tile", i);
 		D2D1_RECT_F rect = D2D1::RectF(xpos, ypos, xpos + w, ypos + h);
-		sprite->SetRect(rect);
-		m_pRenderTarget->DrawBitmap(sprite->GetBitmap(), rect);
+		sprite->SetPaletteRect(rect);
+		m_pRenderTarget->DrawBitmap(
+			CResourceManager::GetInst()->GetIdxBitmap(sprite->GetIdx())->GetBitmap(),
+			rect,
+			1.0f,
+			D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			sprite->GetRect()
+		);
+		
 		xpos += w;
 		if (xpos >= PALETTE_WIDTH - w)
 		{
@@ -53,8 +61,14 @@ void CEditWnd::RenderPalette()
 	{
 		sprite = CResourceManager::GetInst()->GetImage("Block", i);
 		D2D1_RECT_F rect = D2D1::RectF(xpos, ypos, xpos + w, ypos + h);
-		sprite->SetRect(rect);
-		m_pRenderTarget->DrawBitmap(sprite->GetBitmap(), rect);
+		sprite->SetPaletteRect(rect);
+		m_pRenderTarget->DrawBitmap(
+			CResourceManager::GetInst()->GetIdxBitmap(sprite->GetIdx())->GetBitmap(),
+			rect,
+			1.0f,
+			D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			sprite->GetRect());
+
 		xpos += w;
 		if (xpos >= PALETTE_WIDTH - w)
 		{

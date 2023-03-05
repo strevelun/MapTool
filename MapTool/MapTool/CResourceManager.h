@@ -7,6 +7,7 @@
 #include <string>
 
 class CSprite;
+class CBitmap;
 
 class CResourceManager
 {
@@ -16,6 +17,7 @@ private:
 	CResourceManager();
 	~CResourceManager();
 	std::map<std::string, std::vector<CSprite*>> m_mapImage; // todo : delete
+	std::vector<CBitmap*> m_vecBitmap;
 
 public:
 	static CResourceManager* GetInst()
@@ -36,15 +38,14 @@ public:
 
 	void LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wstring folderName);
 
-	CSprite* GetImage(std::string key, int idx) 
-	{
-		return m_mapImage.at(key).at(idx);
-	}
-
+	CSprite* GetImage(std::string key, int idx)  { return m_mapImage.at(key).at(idx); }
 	int GetVecSize(std::string key)
 	{
 		if (m_mapImage.find(key) == m_mapImage.end()) return -1;
 		return m_mapImage.at(key).size();
 	}
+	CBitmap* GetIdxBitmap(int _idx) const { return m_vecBitmap.at(_idx); }
+
+	void SetIdxBitmap(CBitmap* _bitmap) { m_vecBitmap.push_back(_bitmap); }
 };
 
