@@ -18,11 +18,13 @@ CResourceManager::~CResourceManager()
 {
     for (auto& pair : m_mapImage)
     {
-        //delete[] pair.second.at(0);
+        for (auto* sprite : pair.second)
+            delete sprite;
+        pair.second.clear();
     }
+    m_mapImage.clear();
 }
 
-// 폴더 이름을 매개변수로 넘겨주면 그 폴더 안에 있는 파일을 로드해준다.
 void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wstring folderName)
 {
     int tileIdx = 0;
@@ -46,7 +48,7 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
     bpp.dpiX = (FLOAT)0;
     bpp.dpiY = (FLOAT)0;
 
-    int clipSize;
+    int clipSize = 0;
 
     WIN32_FIND_DATA fd;
     HANDLE hFind = ::FindFirstFile((LPCWSTR)searchPath.c_str(), &fd);
