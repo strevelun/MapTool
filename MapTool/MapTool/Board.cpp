@@ -112,10 +112,10 @@ void Board::PutSprite(int _xpos, int _ypos, CMouse* _mouse)
 
 	switch (sprite->GetType())
 	{
-	case tType::Tile:
+	case eType::Tile:
 		m_vecLayer->at(0).AddSprite(x, y, sprite);
 		break;
-	case tType::Block:
+	case eType::Block:
 		m_vecLayer->at(1).AddSprite(x, y, sprite);
 		break;
 	//case Type::Character:
@@ -290,9 +290,9 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			tType type = sprite->GetType();
+			eType type = sprite->GetType();
 			int idx = sprite->GetIdx();
-			fwrite(&type, sizeof(tType), 1, pFile);
+			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
@@ -306,9 +306,9 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			tType type = sprite->GetType();
+			eType type = sprite->GetType();
 			int idx = sprite->GetIdx();
-			fwrite(&type, sizeof(tType), 1, pFile);
+			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
@@ -322,9 +322,9 @@ void Board::SaveMap(HWND _hWnd)
 			if (sprite == nullptr) continue;
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
-			tType type = sprite->GetType();
+			eType type = sprite->GetType();
 			int idx = sprite->GetIdx();
-			fwrite(&type, sizeof(tType), 1, pFile);
+			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
 	}
@@ -392,22 +392,22 @@ void Board::LoadMap(HWND _hWnd, ID2D1RenderTarget* _pRenderTarget)
 
 	int x, y;
 	int idx;
-	tType type;
+	eType type;
 
 	while (fread(&x, sizeof(int), 1, pFile) == 1 &&
 		fread(&y, sizeof(int), 1, pFile) == 1 &&
-		fread(&type, sizeof(tType), 1, pFile) == 1 && 
+		fread(&type, sizeof(eType), 1, pFile) == 1 && 
 		fread(&idx, sizeof(int), 1, pFile) == 1)
 	{
 		CSprite* sprite = nullptr;
 
 		switch (type)
 		{
-		case tType::Tile:
+		case eType::Tile:
 			sprite = CResourceManager::GetInst()->GetImage("Tile", idx);
 			m_vecLayer->at(0).AddSprite(x, y, sprite);
 			break;
-		case tType::Block:
+		case eType::Block:
 			sprite = CResourceManager::GetInst()->GetImage("Block", idx);
 			if (sprite->GetSize().width < 30)
 				m_vecLayer->at(2).AddSprite(x, y, sprite);

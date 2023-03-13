@@ -93,13 +93,13 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
 
                     switch(sprite->GetType())
                     {
-                    case tType::Tile:
+                    case eType::Tile:
                         m_mapImage["Tile"].push_back(sprite);
                         break;
-                    case tType::Block:
+                    case eType::Block:
                         m_mapImage["Block"].push_back(sprite);
                         break;
-                    case tType::Character:
+                    case eType::Character:
                         m_mapImage["Character"].push_back(sprite);
                         break;
                     }

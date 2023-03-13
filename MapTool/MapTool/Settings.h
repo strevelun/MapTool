@@ -11,10 +11,16 @@ enum class tMenuEvent
 	Spawn_Monster
 };
 
-enum class tType
+enum class eType
 {
 	Tile,
 	Block,
 	Character,
 	None
 };
+
+typedef struct _boardData
+{
+	int idx;
+	eType type;
+} tBoardData;

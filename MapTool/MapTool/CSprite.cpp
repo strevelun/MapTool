@@ -29,7 +29,7 @@ void CSprite::Render(ID2D1RenderTarget* _pRenderTarget, int _x, int _y, float _w
 
 	int width;
 
-	if (m_type == tType::Character)
+	if (m_type == eType::Character)
 		width = m_rect.right - m_rect.left;
 	else
 		width = m_size.width > 30 ? BOARD_BOX_SIZE : m_size.width ; // ºí·Ï°ú ±ê¹ß
