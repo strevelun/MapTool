@@ -95,9 +95,11 @@ void CResourceManager::LoadFiles(ID2D1HwndRenderTarget* _pRenderTarget, std::wst
                     {
                     case eType::Tile:
                         m_mapImage["Tile"].push_back(sprite);
+                        sprite->SetVecIdx(tileIdx++);
                         break;
                     case eType::Block:
                         m_mapImage["Block"].push_back(sprite);
+                        sprite->SetVecIdx(blockIdx++);
                         break;
                     case eType::Character:
                         m_mapImage["Character"].push_back(sprite);

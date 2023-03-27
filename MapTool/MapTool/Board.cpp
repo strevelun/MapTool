@@ -291,7 +291,7 @@ void Board::SaveMap(HWND _hWnd)
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
 			eType type = sprite->GetType();
-			int idx = sprite->GetIdx();
+			int idx = sprite->GetVecIdx();
 			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
@@ -307,7 +307,7 @@ void Board::SaveMap(HWND _hWnd)
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
 			eType type = sprite->GetType();
-			int idx = sprite->GetIdx();
+			int idx = sprite->GetVecIdx();
 			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
@@ -323,7 +323,7 @@ void Board::SaveMap(HWND _hWnd)
 			fwrite(&j, sizeof(int), 1, pFile);
 			fwrite(&i, sizeof(int), 1, pFile);
 			eType type = sprite->GetType();
-			int idx = sprite->GetIdx();
+			int idx = sprite->GetVecIdx();
 			fwrite(&type, sizeof(eType), 1, pFile);
 			fwrite(&idx, sizeof(int), 1, pFile);
 		}
